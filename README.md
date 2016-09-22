@@ -1,44 +1,47 @@
 # pysndfx
-Apply audio effects to NumPy ndarrays or audio files.
+**Apply audio effects such as reverb and EQ directly to audio files or NumPy ndarrays.**
 
 This is a lightweight Python wrapper for SoX, the Swiss Army knife of sound processing programs. Supported effects range from EQ, compression and noise reduction to phasers, reverbs and pitch shifters.
 
 ## Install
-First make sure Python and pip are installed, then run:
+The prefered way of installing is with [conda](https://anaconda.org/) as
+```sh
+conda install -c conda-forge pysndfx
+```
+but it's also possible to install with pip as
 ```sh
 pip install "git+ssh://git@github.com/carlthome/python-sound-effects"
 ```
-
-The system must also have [SoX](http://sox.sourceforge.net/) installed (for Debian-based operating systems: `apt install sox`).
+but then the system must also have [SoX](http://sox.sourceforge.net/) installed (for Debian-based operating systems: `apt install sox`).
 
 ## Usage
-Process 
+First create an audio effects chain:
 ```python
 # Import the package and create an audio effects chain.
 from pysndfx.dsp import Chain
-c = (Chain()
-        .phaser(0.5, 0.5, 0.5, 0.5, 0.5)
-        .reverb(False, 50, 50, 100, 100, 25, 10))
+apply_audio_fx = (Chain()
+                     .phaser(0.5, 0.5, 0.5, 0.5, 0.5)
+                     .reverb(False, 50, 50, 100, 100, 25, 10))
+```
 
+Then we can call the effects chain object with paths to audio files, or directly with NumPy ndarrays:
+```python
 infile = 'my_audio_file.wav'
 outfile = 'my_processed_audio_file.ogg'
 
 # Apply phaser and reverb directly to an audio file.
-c(infile, outfile)
+apply_audio_fx(infile, outfile)
 
 # Or, apply the effects directly to a NumPy ndarray
 from librosa import load
 x, sr = load(infile, sr=None)
-y = c(x)
-```
+y = apply_audio_fx(x)
 
-It's also possible to load/save from and to ndarrays and files as you go, like:
-```python
 # Apply the effects and return the results as a NumPy ndarray
-y = c(infile)
+y = apply_audio_fx(infile)
 
 # Apply the effects to a NumPy ndarray but store the resulting audio to disk.
-c(x, outfile)
+apply_audio_fx(x, outfile)
 ```
 
 There's also experimental streaming support but only with the default input and output audio device. Try applying reverb to a microphone input and listening to the results live like this:
