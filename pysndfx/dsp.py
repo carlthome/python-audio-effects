@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-A lightweight Python wrapper of the sox command-line interfaces effects.
+A lightweight Python wrapper of SoX's effects.
 """
 import re
 import shlex
@@ -11,8 +11,11 @@ import numpy as np
 
 class Chain:
     def __init__(self):
-        self.command = ""
-
+        self.command = ""                  
+        
+        
+        # TODO Remove
+        """
         stdout, stderr = Popen(
             ['sox', '--help'], stdout=PIPE, stderr=PIPE).communicate()
         if stderr:
@@ -28,6 +31,8 @@ class Chain:
             r = re.search(e + ' (.*)', stdout.decode())
             if r:
                 print(e + ': ' + str(r.group(1).split()))
+        """
+                
 
     def allpass(self):
         pass
@@ -220,43 +225,42 @@ class Chain:
 
     def vol(self):
         pass
+        
+    def save(self, outfile):
+        self.outfile = outfile
 
-    def __call__(self, src=None, dst=np.ndarray):
+    def __call__(self, src, dst=np.ndarray, samplerate=44100):
         if isinstance(src, np.ndarray):
-            # TODO Don't assume input bit depth and sample rate.
-            infile = '-t raw -b 32 -r 44100 -e floating-point -'
+            if src.ndim == 2 and src.shape[0] == 2:
+                channels = '-c 2'
+            else:
+                channels = '-c 1'
+            infile = '-t raw -e floating-point -b 32 -r ' + str(samplerate) + ' ' + channels + ' -'
             stdin = src.tobytes()
         elif isinstance(src, str):
             # TODO Allow headerless input files.
             infile = src
             stdin = None
         elif isinstance(src, list):
-            # TODO Allow combining files (e.g. take list input args).
+            # TODO Allow combining files.
             raise ValueError('Combining files not supported yet.')
-        elif src is None:
+        else:
             # TODO Allow other audio devices but the default.
             infile = '-d'
-        else:
-            raise ValueError("Invalid input.")
-
+            stdin = None
         if dst is np.ndarray:
             # TODO Make output bit depth and output sample rate into parameters.
-            outfile = '-t raw -b 32 -r 44100 -e floating-point -'
+            outfile = '-t raw -b 32 -r 44100 -e floating-point -c 2 -'
         elif isinstance(dst, str):
             outfile = dst
-        elif dst is None:
+        else:
             # TODO Allow other audio devices but the default.
             outfile = '-d'
-        else:
-            raise ValueError("Invalid output.")
 
-        # TODO Split command into list before passing it to Popen for OS compatitbility.
-        args = shlex.split(' '.join(['sox -S', infile, outfile, self.command]))
-        print(" ".join(args))
-        stdout, stderr = Popen(
-            args, bufsize=-1, stdout=PIPE, stderr=PIPE).communicate(stdin)
+        cmd = shlex.split(' '.join(['sox', infile, outfile, self.command]))
+        stdout, stderr = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin)
         if stderr:
-            raise Exception("Command: " + str(args), stderr)
+            raise RuntimeError("Command: " + str(cmd), stderr)
         if stdout:
             outsound = np.frombuffer(stdout)
             return outsound
