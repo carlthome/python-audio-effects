@@ -19,9 +19,9 @@ First create an audio effects chain:
 ```python
 # Import the package and create an audio effects chain.
 from pysndfx.dsp import Chain
-apply_audio_fx = (Chain()
-                     .phaser(0.5, 0.5, 0.5, 0.5, 0.5)
-                     .reverb(False, 50, 50, 100, 100, 25, 10))
+apply_audio_fx = Chain()\
+                     .phaser(0.5, 0.5, 0.5, 0.5, 0.5)\
+                     .reverb(False, 50, 50, 100, 100, 25, 10)
 ```
 
 Then we can call the effects chain object with paths to audio files, or directly with NumPy ndarrays:
