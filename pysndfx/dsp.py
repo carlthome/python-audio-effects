@@ -220,33 +220,30 @@ class AudioEffectsChain:
                  src,
                  dst=np.ndarray,
                  samplerate=44100,
+                 dtype=np.float32,
                  allow_clipping=True):
+        extension = '-t raw'
+        encoding = '-e floating-point'
+        bitdepth = '-b' + str(dtype().nbytes * 8)
+        samplerate = '-r' + str(samplerate)
+        pipe = '-'
+
+        stdin = None
         if isinstance(src, np.ndarray):
-            if src.ndim == 2 and src.shape[0] == 2:
-                channels = '-c 2'
-            else:
-                channels = '-c 1'
-            infile = '-t raw -e floating-point -b 32 -r ' + str(
-                samplerate) + ' ' + channels + ' -'
+            channels = '-c ' + str(src.ndim)
+            infile = ' '.join(
+                [extension, encoding, bitdepth, samplerate, channels, pipe])
             stdin = src.tobytes()
         elif isinstance(src, str):
-            # TODO Allow headerless input files.
             infile = src
-            stdin = None
-        elif isinstance(src, list):
-            # TODO Allow combining files.
-            raise ValueError('Combining files not supported yet.')
         else:
-            # TODO Allow other audio devices but the default.
             infile = '-d'
-            stdin = None
+
         if dst is np.ndarray:
-            # TODO Make output bit depth and output sample rate into parameters.
-            outfile = '-t raw -b 32 -r 44100 -e floating-point -c 2 -'
+            outfile = ' '.join([extension, encoding, pipe])
         elif isinstance(dst, str):
             outfile = dst
         else:
-            # TODO Allow other audio devices but the default.
             outfile = '-d'
 
         cmd = shlex.split(' '.join(['sox',
