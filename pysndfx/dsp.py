@@ -13,30 +13,30 @@ class AudioEffectsChain:
     def equalizer(self, frequency, q=1.0, db=-3.0):
         self.command.append('equalizer')
         self.command.append(frequency)
-        self.command.append(q + 'q')
+        self.command.append(str(q) + 'q')
         self.command.append(db)
         return self
 
     def bandpass(self, frequency, q=1.0):
         self.command.append('bandpass')
         self.command.append(frequency)
-        self.command.append(q + 'q')
+        self.command.append(str(q) + 'q')
         return self
 
     def bandreject(self, frequency, q=1.0):
         self.command.append('bandreject')
         self.command.append(frequency)
-        self.command.append(q + 'q')
+        self.command.append(str(q) + 'q')
         return self
 
-    def lowshelf(self, gain=-20, frequency=100, slope=0.5):
+    def lowshelf(self, gain=-20.0, frequency=100, slope=0.5):
         self.command.append('bass')
         self.command.append(gain)
         self.command.append(frequency)
         self.command.append(slope)
         return self
 
-    def highshelf(self, gain=-20, frequency=3000, slope=0.5):
+    def highshelf(self, gain=-20.0, frequency=3000, slope=0.5):
         self.command.append('treble')
         self.command.append(gain)
         self.command.append(frequency)
@@ -46,13 +46,13 @@ class AudioEffectsChain:
     def highpass(self, frequency, q=0.707):
         self.command.append('highpass')
         self.command.append(frequency)
-        self.command.append(q + 'q')
+        self.command.append(str(q) + 'q')
         return self
 
     def lowpass(self, frequency, q=0.707):
         self.command.append('lowpass')
         self.command.append(frequency)
-        self.command.append(q + 'q')
+        self.command.append(str(q) + 'q')
         return self
 
     def limiter(self, gain=3.0):

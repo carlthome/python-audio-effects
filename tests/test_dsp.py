@@ -4,8 +4,10 @@ import librosa as lr
 
 from pysndfx.dsp import AudioEffectsChain
 
-c = AudioEffectsChain()\
+apply_audio_effects = AudioEffectsChain()\
     .phaser()\
+    .highshelf()\
+    .lowshelf()\
     .reverb()
 
 infile = lr.util.example_audio_file()
@@ -14,29 +16,29 @@ outfile = 'test_output.ogg'
 
 
 def test_file_to_file():
-    c(infile, outfile)
+    apply_audio_effects(infile, outfile)
     y = lr.load(outfile, None)[0]
     assert lr.util.valid_audio(y)
 
 
 def test_file_to_numpy():
-    y = c(infile)
+    y = apply_audio_effects(infile)
     assert lr.util.valid_audio(y)
 
 
 def test_numpy_to_numpy():
-    y = c(x)
+    y = apply_audio_effects(x)
     assert lr.util.valid_audio(y)
 
 
 def test_mono_to_file():
-    c(x, outfile)
+    apply_audio_effects(x, outfile)
     y = lr.load(outfile, None)[0]
     assert lr.util.valid_audio(y)
 
 
 def test_stereo_to_file():
-    c(x, outfile)
+    apply_audio_effects(x, outfile)
     y = lr.load(outfile, None, mono=False)[0]
     assert lr.util.valid_audio(y)
 
