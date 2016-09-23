@@ -1,241 +1,233 @@
 # coding=utf-8
-"""
-A lightweight Python wrapper of SoX's effects.
-"""
-import re
+"""A lightweight Python wrapper of SoX's effects."""
 import shlex
 from subprocess import PIPE, Popen
 
 import numpy as np
 
 
-class Chain:
+class EffectsChain:
     def __init__(self):
-        self.command = ""                  
-        
-        
-        # TODO Remove
-        """
-        stdout, stderr = Popen(
-            ['sox', '--help'], stdout=PIPE, stderr=PIPE).communicate()
-        if stderr:
-            raise Exception(stderr)
-        r = re.search('EFFECTS: ([\w+#* ]+)', stdout.decode())
-        effects = r.group(1).split()
-        for e in effects:
-            stdout, stderr = Popen(
-                ['sox', '--help-effect', e], stdout=PIPE,
-                stderr=PIPE).communicate()
-            if stderr:
-                raise Exception(stderr)
-            r = re.search(e + ' (.*)', stdout.decode())
-            if r:
-                print(e + ': ' + str(r.group(1).split()))
-        """
-                
+        self.command = []
 
-    def allpass(self):
-        pass
+    def equalizer(self, frequency, q=1.0, db=-3.0):
+        self.command.append('equalizer')
+        self.command.append(frequency)
+        self.command.append(q + 'q')
+        self.command.append(db)
+        return self
 
-    def band(self):
-        pass
+    def bandpass(self, frequency, q=1.0):
+        self.command.append('bandpass')
+        self.command.append(frequency)
+        self.command.append(q + 'q')
+        return self
 
-    def bandpass(self):
-        pass
+    def bandreject(self, frequency, q=1.0):
+        self.command.append('bandreject')
+        self.command.append(frequency)
+        self.command.append(q + 'q')
+        return self
 
-    def bandreject(self):
-        pass
+    def lowshelf(self, gain=-20, frequency=100, slope=0.5):
+        self.command.append('bass')
+        self.command.append(gain)
+        self.command.append(frequency)
+        self.command.append(slope)
+        return self
 
-    def bass(self):
-        pass
+    def highshelf(self, gain=-20, frequency=3000, slope=0.5):
+        self.command.append('treble')
+        self.command.append(gain)
+        self.command.append(frequency)
+        self.command.append(slope)
+        return self
+
+    def highpass(self, frequency, q=0.707):
+        self.command.append('highpass')
+        self.command.append(frequency)
+        self.command.append(q + 'q')
+        return self
+
+    def lowpass(self, frequency, q=0.707):
+        self.command.append('lowpass')
+        self.command.append(frequency)
+        self.command.append(q + 'q')
+        return self
+
+    def limiter(self, gain=3.0):
+        self.command.append('gain')
+        self.command.append('-l')
+        self.command.append(gain)
+        return self
+
+    def normalize(self):
+        self.command.append('gain')
+        self.command.append('-n')
+        return self
+
+    def compand(self, attack=0.05, decay=0.5):
+        raise NotImplemented()
+        return self
 
     def bend(self):
-        pass
-
-    def biquad(self):
-        pass
+        raise NotImplemented()
+        return self
 
     def chorus(self):
-        pass
+        raise NotImplemented()
+        return self
 
-    def channels(self):
-        pass
-
-    def compand(self):
-        pass
-
-    def contrast(self):
-        pass
-
-    def dcshift(self):
-        pass
-
-    def deemph(self):
-        pass
-
-    def delay(self):
-        pass
-
-    def dither(self):
-        pass
-
-    def downsample(self):
-        pass
-
-    def earwax(self):
-        pass
-
-    def echo(self):
-        pass
-
-    def echos(self):
-        pass
-
-    def equalizer(self):
-        pass
+    def delay(self,
+              gain_in=0.8,
+              gain_out=0.9,
+              delays=list((1000, 1800)),
+              decays=list((0.3, 0.25)),
+              parallel=False):
+        self.command.append('echo' + 's' if parallel else '')
+        self.command.append(gain_in)
+        self.command.append(gain_out)
+        map(self.command.append, list(sum(zip(delays, decays), ())))
+        return self
 
     def fade(self):
-        pass
+        raise NotImplemented()
+        return self
 
-    def fir(self):
-        pass
+    def flanger(self,
+                delay=0,
+                depth=2,
+                regen=0,
+                width=71,
+                speed=0.5,
+                shape='sine',
+                phase=25,
+                interp='linear'):
+        raise NotImplemented()
+        return self
 
-    def flanger(self):
-        pass
-
-    def gain(self):
-        pass
-
-    def highpass(self):
-        pass
-
-    def hilbert(self):
-        pass
-
-    def ladspa(self):
-        pass
-
-    def loudness(self):
-        pass
-
-    def lowpass(self):
-        pass
+    def gain(self, db):
+        self.command.append('gain')
+        self.command.append(db)
+        return self
 
     def mcompand(self):
-        pass
+        raise NotImplemented()
+        return self
 
-    def noiseprof(self):
-        pass
-
-    def noisered(self):
-        pass
-
-    def norm(self):
-        pass
+    def noise_reduction(self, amount=0.5):
+        # TODO Run sox once with noiseprof on silent portions to generate a noise profile.
+        raise NotImplemented()
+        return self
 
     def oops(self):
-        pass
+        raise NotImplemented()
+        return self
 
     def overdrive(self):
-        pass
+        raise NotImplemented()
+        return self
 
-    def pad(self):
-        pass
-
-    def phaser(self, gain_in, gain_out, delay, decay, speed):
-        self.command += ' phaser ' + ' '.join(
-            map(str, [gain_in, gain_out, delay, decay, speed]))
+    def phaser(self,
+               gain_in=0.9,
+               gain_out=0.8,
+               delay=1,
+               decay=0.25,
+               speed=2,
+               triangular=False):
+        self.command.append('phaser')
+        self.command.append(gain_in)
+        self.command.append(gain_out)
+        self.command.append(delay)
+        self.command.append(decay)
+        self.command.append(speed)
+        if triangular:
+            self.command.append('-t')
+        else:
+            self.command.append('-s')
         return self
 
     def pitch(self):
-        pass
+        raise NotImplemented()
+        return self
 
-    def rate(self):
-        pass
+    def loop(self):
+        self.command.append('repeat')
+        self.command.append('-')
+        return self
 
-    def remix(self):
-        pass
-
-    def repeat(self):
-        pass
-
-    def reverb(self, wet_only, reverberance, hf_damping, room_scale,
-               stereo_depth, pre_delay, wet_gain):
-        self.command += ' reverb '
+    def reverb(self,
+               reverberance=50,
+               hf_damping=50,
+               room_scale=100,
+               stereo_depth=100,
+               pre_delay=20,
+               wet_gain=0,
+               wet_only=False):
+        self.command.append('reverb')
         if wet_only:
-            self.command += ' -w '
-        self.command += ' '.join(
-            map(str, [reverberance, hf_damping, room_scale, stereo_depth,
-                      pre_delay, wet_gain]))
+            self.command.append('-w')
+        self.command.append(reverberance)
+        self.command.append(hf_damping)
+        self.command.append(room_scale)
+        self.command.append(stereo_depth)
+        self.command.append(pre_delay)
+        self.command.append(wet_gain)
         return self
 
     def reverse(self):
-        pass
-
-    def riaa(self):
-        pass
+        raise NotImplemented()
+        return self
 
     def silence(self):
-        pass
-
-    def sinc(self):
-        pass
-
-    def spectrogram(self):
-        pass
+        raise NotImplemented()
+        return self
 
     def speed(self):
-        pass
-
-    def splice(self):
-        pass
-
-    def stat(self):
-        pass
-
-    def stats(self):
-        pass
-
-    def stretch(self):
-        pass
-
-    def swap(self):
-        pass
+        raise NotImplemented()
+        return self
 
     def synth(self):
-        pass
+        # Maybe skip this entirely?
+        raise NotImplemented()
+        return self
 
     def tempo(self):
-        pass
-
-    def treble(self):
-        pass
+        raise NotImplemented()
+        return self
 
     def tremolo(self):
-        pass
+        raise NotImplemented()
+        return self
 
     def trim(self):
-        pass
+        raise NotImplemented()
+        return self
 
     def upsample(self):
-        pass
+        raise NotImplemented()
+        return self
 
     def vad(self):
-        pass
+        raise NotImplemented()
+        return self
 
     def vol(self):
-        pass
-        
-    def save(self, outfile):
-        self.outfile = outfile
+        raise NotImplemented()
+        return self
 
-    def __call__(self, src, dst=np.ndarray, samplerate=44100):
+    def __call__(self,
+                 src,
+                 dst=np.ndarray,
+                 samplerate=44100,
+                 allow_clipping=False):
         if isinstance(src, np.ndarray):
             if src.ndim == 2 and src.shape[0] == 2:
                 channels = '-c 2'
             else:
                 channels = '-c 1'
-            infile = '-t raw -e floating-point -b 32 -r ' + str(samplerate) + ' ' + channels + ' -'
+            infile = '-t raw -e floating-point -b 32 -r ' + str(
+                samplerate) + ' ' + channels + ' -'
             stdin = src.tobytes()
         elif isinstance(src, str):
             # TODO Allow headerless input files.
@@ -257,10 +249,15 @@ class Chain:
             # TODO Allow other audio devices but the default.
             outfile = '-d'
 
-        cmd = shlex.split(' '.join(['sox', infile, outfile, self.command]))
-        stdout, stderr = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin)
+        strings = ['sox', '-G', '-V1'
+                   if allow_clipping else '-V2', infile, outfile] + [
+                       str(x) for x in self.command
+                   ]
+        cmd = shlex.split(' '.join(strings))
+        stdout, stderr = Popen(
+            cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin)
         if stderr:
-            raise RuntimeError("Command: " + str(cmd), stderr)
+            raise RuntimeError(stderr.decode())
         if stdout:
             outsound = np.frombuffer(stdout)
             return outsound

@@ -1,15 +1,12 @@
 # coding=utf-8
-"""
-Testing module for the DSP package.
-"""
+"""Testing module for the DSP package, preferably run with py.test."""
 import librosa as lr
 
-from pysndfx.dsp import Chain
+from pysndfx.dsp import EffectsChain
 
-
-c = (Chain()
-        .phaser(0.5, 0.5, 0.5, 0.5, 0.5)
-        .reverb(False, 50, 50, 100, 100, 25, 10))
+c = EffectsChain()\
+    .phaser()\
+    .reverb()
 
 infile = lr.util.example_audio_file()
 x, sr = lr.load(infile, sr=None)
@@ -37,12 +34,12 @@ def test_mono_to_file():
     y = lr.load(outfile, None)[0]
     assert lr.util.valid_audio(y)
 
-    
+
 def test_stereo_to_file():
     c(x, outfile)
     y = lr.load(outfile, None, mono=False)[0]
     assert lr.util.valid_audio(y)
 
-# TODO
+# TODO How do we test this properly?
 #def test_streaming():
 #    c(None, None)
