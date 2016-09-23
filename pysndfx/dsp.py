@@ -80,14 +80,14 @@ class AudioEffectsChain:
 
     def delay(self,
               gain_in=0.8,
-              gain_out=0.9,
+              gain_out=0.5,
               delays=list((1000, 1800)),
               decays=list((0.3, 0.25)),
               parallel=False):
-        self.command.append('echo' + 's' if parallel else '')
+        self.command.append('echo' + ('s' if parallel else ''))
         self.command.append(gain_in)
         self.command.append(gain_out)
-        map(self.command.append, list(sum(zip(delays, decays), ())))
+        self.command.extend(list(sum(zip(delays, decays), ())))
         return self
 
     def fade(self):
@@ -220,7 +220,7 @@ class AudioEffectsChain:
                  src,
                  dst=np.ndarray,
                  samplerate=44100,
-                 allow_clipping=False):
+                 allow_clipping=True):
         if isinstance(src, np.ndarray):
             if src.ndim == 2 and src.shape[0] == 2:
                 channels = '-c 2'
@@ -242,14 +242,14 @@ class AudioEffectsChain:
             stdin = None
         if dst is np.ndarray:
             # TODO Make output bit depth and output sample rate into parameters.
-            outfile = '-t raw -b 32 -r 44100 -e floating-point -c 2 -'
+            outfile = '-t raw -b 32 -r 44100 -e floating-point -'
         elif isinstance(dst, str):
             outfile = dst
         else:
             # TODO Allow other audio devices but the default.
             outfile = '-d'
 
-        strings = ['sox', '-G', '-V1'
+        strings = ['sox', '-N', '-V1'
                    if allow_clipping else '-V2', infile, outfile] + [
                        str(x) for x in self.command
                    ]

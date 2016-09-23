@@ -7,8 +7,9 @@ from pysndfx.dsp import AudioEffectsChain
 apply_audio_effects = AudioEffectsChain()\
     .phaser()\
     .highshelf()\
-    .lowshelf()\
-    .reverb()
+    .lowshelf() \
+    .delay()\
+    .reverb()\
 
 infile = lr.util.example_audio_file()
 x, sr = lr.load(infile, sr=None)
