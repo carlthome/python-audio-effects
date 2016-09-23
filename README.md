@@ -18,8 +18,8 @@ but then the system must also have [SoX](http://sox.sourceforge.net/) installed 
 First create an audio effects chain.
 ```python
 # Import the package and create an audio effects chain.
-from pysndfx.dsp import Chain
-apply_audio_fx = Chain()\
+from pysndfx.dsp import AudioEffectsChain
+apply_audio_fx = AudioEffectsChain()\
                      .phaser()\
                      .reverb()
 ```
@@ -44,5 +44,5 @@ apply_audio_fx(x, outfile)
 ```
 There's also experimental streaming support. Try applying reverb to a microphone input and listening to the results live like this:
 ```sh
-python -c "from pysndfx.dsp import Chain; Chain().reverb()(None, None)"
+python -c "from pysndfx.dsp import AudioEffectsChain; AudioEffectsChain().reverb()(None, None)"
 ```
