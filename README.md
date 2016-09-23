@@ -4,15 +4,11 @@
 This is a lightweight Python wrapper for SoX, the Swiss Army knife of sound processing programs. Supported effects range from EQ, compression and noise reduction to phasers, reverbs and pitch shifters.
 
 ## Install
-The prefered way of installing is with [conda](https://anaconda.org/) as
+Install with pip as
 ```sh
-conda install -c conda-forge pysndfx
+pip install pysndfx
 ```
-but it's also possible to install with pip as
-```sh
-pip install "git+ssh://git@github.com/carlthome/python-sound-effects"
-```
-but then the system must also have [SoX](http://sox.sourceforge.net/) installed (for Debian-based operating systems: `apt install sox`).
+The system must also have [SoX](http://sox.sourceforge.net/) installed (for Debian-based operating systems: `apt install sox`, or with Anaconda as `conda install -y -c conda-forge sox`)
 
 ## Usage
 First create an audio effects chain.
