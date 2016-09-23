@@ -1,4 +1,4 @@
-# pysndfx
+# pysndfx [![Build Status](https://travis-ci.com/carlthome/python-audio-effects.svg?token=qQ1KCZyDBme5XxMwuNVj&branch=master)](https://travis-ci.com/carlthome/python-audio-effects)
 **Apply audio effects such as reverb and EQ directly to audio files or NumPy ndarrays.**
 
 This is a lightweight Python wrapper for SoX, the Swiss Army knife of sound processing programs. Supported effects range from EQ, compression and noise reduction to phasers, reverbs and pitch shifters.
