@@ -6,7 +6,7 @@ from subprocess import PIPE, Popen
 import numpy as np
 
 
-class EffectsChain:
+class AudioEffectsChain:
     def __init__(self):
         self.command = []
 

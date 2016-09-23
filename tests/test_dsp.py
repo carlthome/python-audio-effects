@@ -2,9 +2,9 @@
 """Testing module for the DSP package, preferably run with py.test."""
 import librosa as lr
 
-from pysndfx.dsp import EffectsChain
+from pysndfx.dsp import AudioEffectsChain
 
-c = EffectsChain()\
+c = AudioEffectsChain()\
     .phaser()\
     .reverb()
 
