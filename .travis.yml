@@ -1,0 +1,23 @@
+addons:
+  apt:
+    packages:
+      - sox
+
+language: python
+
+python:
+  - "3.5"
+
+before_install: 
+  - export MINICONDA=$HOME/miniconda
+  - export PATH="$MINICONDA/bin:$PATH"
+  - hash -r
+  - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+  - bash Miniconda3-latest-Linux-x86_64.sh -b -f -p $MINICONDA;
+  - conda install -y -c conda-forge -c carlthome --file=requirements.txt
+  
+install:
+  - python setup.py install
+
+script:
+  - python setup.py test
