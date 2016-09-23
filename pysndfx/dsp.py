@@ -242,18 +242,18 @@ class AudioEffectsChain:
             stdin = None
         if dst is np.ndarray:
             # TODO Make output bit depth and output sample rate into parameters.
-            outfile = '-t raw -b 32 -r 44100 -e floating-point -'
+            outfile = '-t raw -b 32 -r 44100 -e floating-point -c 2 -'
         elif isinstance(dst, str):
             outfile = dst
         else:
             # TODO Allow other audio devices but the default.
             outfile = '-d'
 
-        strings = ['sox', '-N', '-V1'
-                   if allow_clipping else '-V2', infile, outfile] + [
-                       str(x) for x in self.command
-                   ]
-        cmd = shlex.split(' '.join(strings))
+        cmd = shlex.split(' '.join(['sox',
+                                    '-N',
+                                    '-V1' if allow_clipping else '-V2',
+                                    infile,
+                                    outfile, ] + list(map(str, self.command))))
         stdout, stderr = Popen(
             cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin)
         if stderr:
