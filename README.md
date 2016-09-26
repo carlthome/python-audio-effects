@@ -4,7 +4,7 @@
 This is a lightweight Python wrapper for SoX, the Swiss Army knife of sound processing programs. Supported effects range from EQ, compression and noise reduction to phasers, reverbs and pitch shifters.
 
 ## Install
-Install with pip as
+Install with pip as:
 ```sh
 pip install pysndfx
 ```
@@ -14,10 +14,10 @@ The system must also have [SoX](http://sox.sourceforge.net/) installed (for Debi
 First create an audio effects chain.
 ```python
 # Import the package and create an audio effects chain.
-from pysndfx.dsp import AudioEffectsChain
-apply_audio_fx = AudioEffectsChain()\
-                     .phaser()\
-                     .reverb()
+from pysndfx import AudioEffectsChain
+apply_audio_fx = (AudioEffectsChain()
+                     .phaser()
+                     .reverb())
 ```
 Then we can call the effects chain object with paths to audio files, or directly with NumPy ndarrays.
 ```python
