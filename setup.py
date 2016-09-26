@@ -4,7 +4,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='pysndfx',
-    version='0.0.0',
+    version='0.0.1',
     long_description=open('README.md').read(),
     license=open('LICENSE').read(),
     author='Carl Thomé',
@@ -12,4 +12,5 @@ setup(
     url='https://github.com/carlthome/python-audio-effects',
     packages=find_packages(),
     install_requires=open('requirements.txt').read().splitlines(),
-    tests_require=['librosa'])
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest', 'librosa'])
