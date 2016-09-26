@@ -40,5 +40,5 @@ apply_audio_fx(x, outfile)
 ```
 There's also experimental streaming support. Try applying reverb to a microphone input and listening to the results live like this:
 ```sh
-python -c "from pysndfx.dsp import AudioEffectsChain; AudioEffectsChain().reverb()(None, None)"
+python -c "from pysndfx import AudioEffectsChain; AudioEffectsChain().reverb()(None, None)"
 ```
