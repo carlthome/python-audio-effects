@@ -12,4 +12,5 @@ setup(
     url='https://github.com/carlthome/python-audio-effects',
     packages=find_packages(),
     install_requires=open('requirements.txt').read().splitlines(),
-    tests_require=['librosa'])
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest', 'librosa'])
