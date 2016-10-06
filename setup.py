@@ -6,8 +6,8 @@ from setuptools import find_packages, setup
 setup(
     name='pysndfx',
     version='0.0.5',
-    long_description='Apply audio effects such as reverb and EQ directly to audio files or NumPy ndarrays.',
-    license='MIT',
+    long_description=open('README.rst').read(),
+    license=open('LICENSE').read(),
     author='Carl Thomé',
     author_email='carlthome@gmail.com',
     url='https://github.com/carlthome/python-audio-effects',
