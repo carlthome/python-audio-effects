@@ -267,7 +267,7 @@ class AudioEffectsChain:
         if stderr:
             raise RuntimeError(stderr.decode())
         if stdout:
-            outsound = np.frombuffer(stdout, dtype=np.float32)
+            outsound = np.fromstring(stdout, dtype=np.float32)
             c = int(channels.split()[-1])
             if c > 1:
                 outsound = outsound.reshape(
