@@ -8,6 +8,7 @@ addons:
   apt:
     packages:
       - sox
+      - pandoc
 
 before_install: 
   - export PATH="MINICONDA=$HOME/miniconda/bin:$PATH"
@@ -16,7 +17,8 @@ before_install:
   - bash Miniconda3-latest-Linux-x86_64.sh -b -f -p MINICONDA=$HOME/miniconda;
   - conda install -y scikit-learn  # TODO Remove this when librosa 0.5 is ready.
   - conda install -y -c conda-forge -c carlthome --file=requirements.txt
-  
+  - pandoc --from=markdown --to=rst --output=README.rst README.md
+
 install:
   - python setup.py install
 
@@ -26,6 +28,7 @@ script:
 deploy:
   provider: pypi
   user: carlthome
+  skip_cleanup: true
   on:
     tags: true
     branch: master

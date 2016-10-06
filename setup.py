@@ -1,11 +1,12 @@
 # coding=utf-8
 """Install config."""
+import os
 from setuptools import find_packages, setup
 
 setup(
     name='pysndfx',
     version='0.0.2',
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     license=open('LICENSE').read(),
     author='Carl Thomé',
     author_email='carlthome@gmail.com',
