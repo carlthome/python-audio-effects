@@ -226,8 +226,8 @@ class AudioEffectsChain:
 
         # Shared SoX flags.
         extension = '-t f32'
-        encoding = ''#'-e floating-point'
-        bitdepth = ''#'-b 32'
+        encoding = ''  #'-e floating-point'
+        bitdepth = ''  #'-b 32'
         samplerate = '-r ' + str(samplerate)
         pipe = '-'
 
@@ -237,7 +237,6 @@ class AudioEffectsChain:
         if isinstance(src, str):
             with ar.audio_open(src) as f:
                 channels = '-c ' + str(f.channels)
-                samplerate = '-r ' + str(f.samplerate)
             infile = src
         elif isinstance(src, np.ndarray):
             channels = '-c ' + str(src.ndim)
@@ -278,6 +277,6 @@ class AudioEffectsChain:
             outsound = np.frombuffer(stdout, dtype=np.float32)
             c = int(channels.split()[-1])
             if c > 1:
-                outsound = outsound.reshape((c, int(len(outsound) / c)), 
-                                            order='F')
+                outsound = outsound.reshape(
+                    (c, int(len(outsound) / c)), order='F')
             return outsound
