@@ -1,2 +1,2 @@
 # coding=utf-8
-from dsp import AudioEffectsChain
+from .dsp import AudioEffectsChain

@@ -2,8 +2,10 @@
 """A lightweight Python wrapper of SoX's effects."""
 import shlex
 from subprocess import PIPE, Popen
+from warnings import warn
 
 import numpy as np
+import audioread as ar
 
 
 class AudioEffectsChain:
@@ -220,41 +222,62 @@ class AudioEffectsChain:
                  src,
                  dst=np.ndarray,
                  samplerate=44100,
-                 dtype=np.float32,
                  allow_clipping=True):
-        extension = '-t raw'
-        encoding = '-e floating-point'
-        bitdepth = '-b' + str(dtype().nbytes * 8)
-        samplerate = '-r' + str(samplerate)
+
+        # Shared SoX flags.
+        extension = '-t f32'
+        encoding = ''#'-e floating-point'
+        bitdepth = ''#'-b 32'
+        samplerate = '-r ' + str(samplerate)
         pipe = '-'
 
+        # Parse input flags.
+        infile = '-d'
         stdin = None
-        if isinstance(src, np.ndarray):
-            channels = '-c ' + str(src.ndim)
-            infile = ' '.join(
-                [extension, encoding, bitdepth, samplerate, channels, pipe])
-            stdin = src.tobytes()
-        elif isinstance(src, str):
+        if isinstance(src, str):
+            with ar.audio_open(src) as f:
+                channels = '-c ' + str(f.channels)
+                samplerate = '-r ' + str(f.samplerate)
             infile = src
-        else:
-            infile = '-d'
+        elif isinstance(src, np.ndarray):
+            channels = '-c ' + str(src.ndim)
+            infile = ' '.join([extension,
+                               encoding,
+                               bitdepth,
+                               samplerate,
+                               channels,
+                               pipe, ])
+            stdin = src.tobytes(order='F')
 
-        if dst is np.ndarray:
-            outfile = ' '.join([extension, encoding, pipe])
-        elif isinstance(dst, str):
-            outfile = dst
-        else:
-            outfile = '-d'
+        # Parse output flags.
+        outfile = '-d'
+        if isinstance(dst, str):
+            outfile = ' '.join([dst])
+        elif dst is np.ndarray:
+            outfile = ' '.join([extension,
+                                encoding,
+                                bitdepth,
+                                samplerate,
+                                channels,
+                                pipe, ])
 
         cmd = shlex.split(' '.join(['sox',
                                     '-N',
                                     '-V1' if allow_clipping else '-V2',
                                     infile,
                                     outfile, ] + list(map(str, self.command))))
+        print(cmd)
         stdout, stderr = Popen(
-            cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin)
+            cmd,
+            stdin=PIPE,
+            stdout=PIPE,
+            stderr=PIPE, ).communicate(stdin)
         if stderr:
             raise RuntimeError(stderr.decode())
         if stdout:
-            outsound = np.frombuffer(stdout)
+            outsound = np.frombuffer(stdout, dtype=np.float32)
+            c = int(channels.split()[-1])
+            if c > 1:
+                outsound = outsound.reshape((c, int(len(outsound) / c)), 
+                                            order='F')
             return outsound

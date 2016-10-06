@@ -1,20 +1,19 @@
-addons:
-  apt:
-    packages:
-      - sox
-
 language: python
 
 python:
   - "3.5"
   - "2.7"
+  
+addons:
+  apt:
+    packages:
+      - sox
 
 before_install: 
-  - export MINICONDA=$HOME/miniconda
-  - export PATH="$MINICONDA/bin:$PATH"
+  - export PATH="MINICONDA=$HOME/miniconda/bin:$PATH"
   - hash -r
   - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-  - bash Miniconda3-latest-Linux-x86_64.sh -b -f -p $MINICONDA;
+  - bash Miniconda3-latest-Linux-x86_64.sh -b -f -p MINICONDA=$HOME/miniconda;
   - conda install -y scikit-learn  # TODO Remove this when librosa 0.5 is ready.
   - conda install -y -c conda-forge -c carlthome --file=requirements.txt
   
