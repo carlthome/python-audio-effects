@@ -11,11 +11,15 @@ addons:
       - pandoc
 
 before_install: 
+  - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
+      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
+    else
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+    fi
+  - bash miniconda.sh -b -f -p MINICONDA=$HOME/miniconda;
   - export PATH="MINICONDA=$HOME/miniconda/bin:$PATH"
   - hash -r
-  - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
-  - bash Miniconda3-latest-Linux-x86_64.sh -b -f -p MINICONDA=$HOME/miniconda;
-  - conda install -y scikit-learn  # TODO Remove this when librosa 0.5 is ready.
+  - conda install -y -c conda-forge scikit-learn librosa
   - conda install -y -c conda-forge -c carlthome --file=requirements.txt
   - pandoc --from=markdown --to=rst --output=README.rst README.md
 
@@ -30,7 +34,6 @@ deploy:
   user: carlthome
   skip_cleanup: true
   on:
-    tags: true
     branch: master
   password:
     secure: EIVQp6DdA6CzKyIuFwzBekGmab/XUUs/9uFK6N1ejQA2219b3NNmogbkvFX1ZWE1sRmhA5PXV5vdToljAXfvL76AyVW01MNT5i6HLb1S4XzwuJYVdGBSFTQYcvgOLBz6yrkAwyuDZ6E9FLGQYEq51+SmD1yA531u8HA24l/RLozLY4cpnNIDoLsKtb9pj20LlwcprmTYFZBIL153z2oap975Vb09QV2qqJ0cL5irjGCUqI4spkzVY2QjA6TnfN0xwLw5XoESJoTY3R8L3cJ8B4JhvUwNsxNZxLY8ik22iRYQ+vUxGbpzYSDZ9WJsPzEqzRf6JHMnydF4qVH9kbXkBPNCUVh/AkBrXbE8YvbyO9P4mwoc55y7Ikpyk4Z5NuJQDVnGvcnySIvnhmNLQk6g1fpKZpydivWN+ZQEyVkCETApNOzMqzOqZaj+Z2my87Kn5rlwhELSNQGygudxtqaBh7EmDmUBYXBMaRIWsu6nquODlwLqImJkHaLH7rAmHQphIppO/QmCqVunFA+UPj+ZMUa7unqnTXuiMefCruTaVH0BAcrrNG8vx49O6rrhg3cW1dPkNb3oGOXuynwN+wXF2lBnfIqTube02hO5YcfyDQW7O9Hru/lBA1j2/n3PMn6TVoRTVqV/+SzU28XeoDOcbqhOMoeWFRrq90Fe9mLpP78=

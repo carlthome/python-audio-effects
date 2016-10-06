@@ -225,9 +225,7 @@ class AudioEffectsChain:
                  allow_clipping=True):
 
         # Shared SoX flags.
-        extension = '-t f32'
-        encoding = ''  #'-e floating-point'
-        bitdepth = ''  #'-b 32'
+        encoding = '-t f32'
         samplerate = '-r ' + str(samplerate)
         pipe = '-'
 
@@ -235,14 +233,12 @@ class AudioEffectsChain:
         infile = '-d'
         stdin = None
         if isinstance(src, str):
-            with ar.audio_open(src) as f:
-                channels = '-c ' + str(f.channels)
             infile = src
+            with ar.audio_open(src) as f:
+                channels = '-c ' + str(f.channels)        
         elif isinstance(src, np.ndarray):
             channels = '-c ' + str(src.ndim)
-            infile = ' '.join([extension,
-                               encoding,
-                               bitdepth,
+            infile = ' '.join([encoding,
                                samplerate,
                                channels,
                                pipe, ])
@@ -251,11 +247,9 @@ class AudioEffectsChain:
         # Parse output flags.
         outfile = '-d'
         if isinstance(dst, str):
-            outfile = ' '.join([dst])
+            outfile = dst
         elif dst is np.ndarray:
-            outfile = ' '.join([extension,
-                                encoding,
-                                bitdepth,
+            outfile = ' '.join([encoding,
                                 samplerate,
                                 channels,
                                 pipe, ])
@@ -265,12 +259,11 @@ class AudioEffectsChain:
                                     '-V1' if allow_clipping else '-V2',
                                     infile,
                                     outfile, ] + list(map(str, self.command))))
-        print(cmd)
         stdout, stderr = Popen(
             cmd,
             stdin=PIPE,
             stdout=PIPE,
-            stderr=PIPE, ).communicate(stdin)
+            stderr=PIPE).communicate(stdin)
         if stderr:
             raise RuntimeError(stderr.decode())
         if stdout:
