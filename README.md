@@ -8,7 +8,7 @@ Install with pip as:
 ```sh
 pip install pysndfx
 ```
-The system must also have [SoX](http://sox.sourceforge.net/) installed (for Debian-based operating systems: `apt install sox`, or with Anaconda as `conda install -y -c conda-forge sox`)
+The system must also have [SoX](http://sox.sourceforge.net/) installed (for Debian-based operating systems: `apt install sox`, or with Anaconda as `conda install -c conda-forge sox`)
 
 ## Usage
 First create an audio effects chain.
