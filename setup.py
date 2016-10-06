@@ -5,7 +5,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='pysndfx',
-    version='0.0.5',
+    version='0.0.6',
     long_description=open('README.rst').read(),
     license=open('LICENSE').read(),
     author='Carl Thomé',
