@@ -8,7 +8,7 @@ from pysndfx.dsp import AudioEffectsChain
 apply_audio_effects = AudioEffectsChain()\
     .highshelf()\
     .reverb()\
-    .phaser(decay=0.75)\
+    .phaser()\
     .delay()\
     .lowshelf()
 

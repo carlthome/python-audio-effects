@@ -5,7 +5,6 @@ from subprocess import PIPE, Popen
 from warnings import warn
 
 import numpy as np
-import audioread as ar
 
 
 class AudioEffectsChain:
@@ -234,8 +233,10 @@ class AudioEffectsChain:
         stdin = None
         if isinstance(src, str):
             infile = src
-            with ar.audio_open(src) as f:
-                channels = '-c ' + str(f.channels)        
+            stdout, stderr = Popen(
+                shlex.split('soxi -c ' + src), stdout=PIPE,
+                stderr=PIPE).communicate()
+            channels = '-c ' + str(int(stdout))
         elif isinstance(src, np.ndarray):
             channels = '-c ' + str(src.ndim)
             infile = ' '.join([encoding,
@@ -260,10 +261,7 @@ class AudioEffectsChain:
                                     infile,
                                     outfile, ] + list(map(str, self.command))))
         stdout, stderr = Popen(
-            cmd,
-            stdin=PIPE,
-            stdout=PIPE,
-            stderr=PIPE).communicate(stdin)
+            cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin)
         if stderr:
             raise RuntimeError(stderr.decode())
         if stdout:
