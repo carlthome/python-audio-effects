@@ -234,15 +234,19 @@ class AudioEffectsChain:
         if isinstance(src, str):
             infile = src
             stdout, stderr = Popen(
-                shlex.split('soxi -c ' + src), stdout=PIPE,
+                shlex.split(
+                    'sox --i -c ' + src, posix=False),
+                stdout=PIPE,
                 stderr=PIPE).communicate()
             channels = '-c ' + str(int(stdout))
         elif isinstance(src, np.ndarray):
             channels = '-c ' + str(src.ndim)
-            infile = ' '.join([encoding,
-                               samplerate,
-                               channels,
-                               pipe, ])
+            infile = ' '.join([
+                encoding,
+                samplerate,
+                channels,
+                pipe,
+            ])
             stdin = src.tobytes(order='F')
 
         # Parse output flags.
@@ -250,16 +254,22 @@ class AudioEffectsChain:
         if isinstance(dst, str):
             outfile = dst
         elif dst is np.ndarray:
-            outfile = ' '.join([encoding,
-                                samplerate,
-                                channels,
-                                pipe, ])
+            outfile = ' '.join([
+                encoding,
+                samplerate,
+                channels,
+                pipe,
+            ])
 
-        cmd = shlex.split(' '.join(['sox',
-                                    '-N',
-                                    '-V1' if allow_clipping else '-V2',
-                                    infile,
-                                    outfile, ] + list(map(str, self.command))))
+        cmd = shlex.split(
+            ' '.join([
+                'sox',
+                '-N',
+                '-V1' if allow_clipping else '-V2',
+                infile,
+                outfile,
+            ] + list(map(str, self.command))),
+            posix=False)
         stdout, stderr = Popen(
             cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin)
         if stderr:
