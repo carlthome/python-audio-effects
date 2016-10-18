@@ -16,7 +16,6 @@ setup(
     name='pysndfx',
     version='0.0.7',
     description='Apply audio effects such as reverb and EQ directly to audio files or NumPy ndarrays.',
-    long_description=read('README.rst'),
     url='https://github.com/carlthome/python-audio-effects',
     author='Carl Thomé',
     author_email='carlthome@gmail.com',
