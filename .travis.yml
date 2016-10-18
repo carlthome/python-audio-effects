@@ -33,6 +33,7 @@ before_install:
   - conda install -yc conda-forge scikit-learn librosa  # TODO This should not be needed for testing.
   - conda install -yc conda-forge --file=requirements.txt
   - pandoc --from=markdown --to=rst --output=README.rst README.md
+  - rm README.md
 
 install:
   - python setup.py install

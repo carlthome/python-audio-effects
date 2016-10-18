@@ -1,5 +1,8 @@
 # pysndfx
 [![Build Status](https://travis-ci.org/carlthome/python-audio-effects.svg?branch=master)](https://travis-ci.org/carlthome/python-audio-effects)
+[![PyPI](https://img.shields.io/pypi/v/pysndfx.svg)](https://pypi.python.org/pypi/pysndfx)
+[![PyPI](https://img.shields.io/pypi/pyversions/pysndfx.svg)](http://py3readiness.org/)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 
 **Apply audio effects such as reverb and EQ directly to audio files or NumPy ndarrays.**
 

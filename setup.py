@@ -14,12 +14,12 @@ def read(filename):
 
 setup(
     name='pysndfx',
-    version='0.0.7',
+    version='0.0.8',
     description='Apply audio effects such as reverb and EQ directly to audio files or NumPy ndarrays.',
     url='https://github.com/carlthome/python-audio-effects',
     author='Carl Thomé',
     author_email='carlthome@gmail.com',
-    license=read('LICENSE'),
+    license='MIT',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
