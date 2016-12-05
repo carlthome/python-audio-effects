@@ -15,7 +15,7 @@ apply_audio_effects = AudioEffectsChain()\
 infile = lr.util.example_audio_file()
 mono, sr = lr.load(infile, sr=None)
 stereo, _ = lr.load(infile, sr=None, mono=False)
-outfile = 'test_output.ogg'
+outfile = 'test_output.wav'
 
 
 def test_file_to_file():
