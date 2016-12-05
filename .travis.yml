@@ -8,6 +8,11 @@ cache:
   directories:
     - "$HOME/miniconda2"
     - "$HOME/miniconda3"
+    
+addons:
+  apt:
+    packages:
+      - sox
 
 before_install:   
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
@@ -20,7 +25,7 @@ before_install:
   - bash miniconda.sh -bfp $MINICONDA;
   - export PATH="$MINICONDA/bin:$PATH"
   - hash -r
-  - conda install -yc conda-forge numpy ffmpeg sox pandoc scikit-learn librosa
+  - conda install -yc conda-forge numpy pandoc scikit-learn librosa
 
 install:
   - python setup.py install
