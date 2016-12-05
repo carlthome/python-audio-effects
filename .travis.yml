@@ -36,6 +36,7 @@ script:
   - python setup.py test
   
 before_deploy:
+  - pandoc --version
   - pandoc --from=markdown --to=rst --output=README.rst README.md
   - rm README.md
 
