@@ -1,7 +1,3 @@
-dist: trusty
-
-sudo: false
-
 language: python
 
 python:
@@ -12,12 +8,6 @@ cache:
   directories:
     - "$HOME/miniconda2"
     - "$HOME/miniconda3"
-
-addons:
-  apt:
-    packages:
-      - sox
-      - pandoc
 
 before_install:   
   - if [[ "$TRAVIS_PYTHON_VERSION" == "2.7" ]]; then
@@ -30,8 +20,7 @@ before_install:
   - bash miniconda.sh -bfp $MINICONDA;
   - export PATH="$MINICONDA/bin:$PATH"
   - hash -r
-  - conda install -yc conda-forge scikit-learn librosa  # TODO This should not be needed for testing.
-  - conda install -yc conda-forge --file=requirements.txt
+  - conda install -yc conda-forge numpy ffmpeg sox pandoc scikit-learn librosa
 
 install:
   - python setup.py install
@@ -40,7 +29,6 @@ script:
   - python setup.py test
   
 before_deploy:
-  - pandoc --version
   - pandoc --from=markdown --to=rst --output=README.rst README.md
   - rm README.md
 
