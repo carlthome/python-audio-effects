@@ -12,6 +12,7 @@ cache:
 addons:
   apt:
     packages:
+      - vorbis-tools
       - sox
 
 before_install:   
