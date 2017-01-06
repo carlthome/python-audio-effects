@@ -6,6 +6,15 @@ from warnings import warn
 
 import numpy as np
 
+# Use this page for examples https://linux.die.net/man/1/soxexam
+# Sox command doc at http://sox.sourceforge.net/sox.html
+# some more examples http://tldp.org/LDP/LG/issue73/chung.html
+# more examples http://dsl.org/cookbook/cookbook_29.html
+
+
+class InvalidEffectParameter(Exception):
+    pass
+
 
 class AudioEffectsChain:
     def __init__(self):
@@ -71,12 +80,23 @@ class AudioEffectsChain:
         raise NotImplemented()
         return self
 
-    def bend(self):
-        raise NotImplemented()
+    def bend(self, bends, frame_rate=None, over_sample=None):
+        self.command.append("bend")
+        if frame_rate is not None and isinstance(frame_rate, int):
+            self.command.append("-f %s" % frame_rate)
+        if over_sample is not None and isinstance(over_sample, int):
+            self.command.append("-o %s" % over_sample)
+        for bend in bends:
+            self.command.append(",".join(bend))
         return self
 
-    def chorus(self):
-        raise NotImplemented()
+    def chorus(self, gain_in, gain_out, decays):
+        self.command.append("chorus")
+        self.command.append(gain_in)
+        self.command.append(gain_out)
+        for decay in decays:
+            *numerical, modulation = decay
+            self.command.append(" ".join(map(str, numerical)) + " -" + modulation)
         return self
 
     def delay(self,
@@ -125,8 +145,10 @@ class AudioEffectsChain:
         raise NotImplemented()
         return self
 
-    def overdrive(self):
-        raise NotImplemented()
+    def overdrive(self, gain=20, colour=20):
+        self.command.append('overdrive')
+        self.command.append(gain)
+        self.command.append(colour)
         return self
 
     def phaser(self,
@@ -148,8 +170,19 @@ class AudioEffectsChain:
             self.command.append('-s')
         return self
 
-    def pitch(self):
-        raise NotImplemented()
+    def pitch(self, shift,
+              use_tree=False,
+              segment=82,
+              search=14.68,
+              overlap=12):
+
+        self.command.append("pitch")
+        if use_tree:
+            self.command.append("-q")
+        self.command.append(shift)
+        self.command.append(segment)
+        self.command.append(search)
+        self.command.append(overlap)
         return self
 
     def loop(self):
@@ -193,12 +226,27 @@ class AudioEffectsChain:
         raise NotImplemented()
         return self
 
-    def tempo(self):
-        raise NotImplemented()
+    def tempo(self, factor,
+              use_tree=False,
+              opt_flag=None,
+              segment=82,
+              search=14.68,
+              overlap=12):
+        self.command.append("pitch")
+        if use_tree:
+            self.command.append("-q")
+        if opt_flag in ("l", "m", "s"):
+            self.command.append("-%s" % opt_flag)
+        self.command.append(factor)
+        self.command.append(segment)
+        self.command.append(search)
+        self.command.append(overlap)
         return self
 
-    def tremolo(self):
-        raise NotImplemented()
+    def tremolo(self, freq, depth=40):
+        self.command.append("tremolo")
+        self.command.append(freq)
+        self.command.append(depth)
         return self
 
     def trim(self):
