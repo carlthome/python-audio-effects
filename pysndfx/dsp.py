@@ -1,5 +1,6 @@
 # coding=utf-8
 """A lightweight Python wrapper of SoX's effects."""
+import logging
 import shlex
 from subprocess import PIPE, Popen
 from warnings import warn
@@ -281,6 +282,7 @@ class AudioEffectsChain:
         stdin = None
         if isinstance(src, str):
             infile = src
+            logging.debug("Running info command : %s" % 'sox --i -c ' + src)
             stdout, stderr = Popen(
                 shlex.split(
                     'sox --i -c ' + src, posix=False),
@@ -318,6 +320,7 @@ class AudioEffectsChain:
                 outfile,
             ] + list(map(str, self.command))),
             posix=False)
+        logging.debug("Running command : %s" % cmd)
         stdout, stderr = Popen(
             cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin)
         if stderr:
