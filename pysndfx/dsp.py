@@ -112,6 +112,9 @@ class AudioEffectsChain:
         self.command.extend(list(sum(zip(delays, decays), ())))
         return self
 
+    def echo(self, **kwargs):
+        self.delay(**kwargs)
+
     def fade(self):
         raise NotImplemented()
         return self
