@@ -216,15 +216,16 @@ class AudioEffectsChain:
         return self
 
     def reverse(self):
-        raise NotImplemented()
+        self.command.append("reverse")
         return self
 
     def silence(self):
         raise NotImplemented()
         return self
 
-    def speed(self):
-        raise NotImplemented()
+    def speed(self, factor, use_semitones=False):
+        self.command.append("speed")
+        self.command.append(factor if not use_semitones else str(factor) + "c")
         return self
 
     def synth(self):
@@ -255,26 +256,36 @@ class AudioEffectsChain:
         self.command.append(depth)
         return self
 
-    def trim(self):
-        raise NotImplemented()
+    def trim(self, positions):
+        self.command.append("trim")
+        for position in positions:
+            # TODO: check if the position means something
+            self.command.append(position)
         return self
 
-    def upsample(self):
-        raise NotImplemented()
+    def upsample(self, factor):
+        self.command.append("upsample")
+        self.command.append(factor)
         return self
 
     def vad(self):
         raise NotImplemented()
         return self
 
-    def vol(self):
-        raise NotImplemented()
+    def vol(self, gain, type="amplitude", limiter_gain=None):
+        self.command.append("vol")
+        if type in ["amplitude", "power", "dB"]:
+            self.command.append(type)
+        else:
+            raise InvalidEffectParameter("Type has to be dB, amplitude or power")
+        if limiter_gain is not None:
+            self.command.append(str(limiter_gain))
         return self
 
     def __call__(self,
                  src,
                  dst=np.ndarray,
-                 sample_in=44100,
+                 sample_in=44100, # used only for arrays
                  sample_out=None,
                  encoding_out=None,
                  channels_out=None,
@@ -299,12 +310,12 @@ class AudioEffectsChain:
         # finding out which channel count to use (defaults to the input file's channel count)
         if channels_out is None:
             channels_out = infile.channels
-        if sample_out is None:
+        if sample_out is None: #if the output samplerate isn't specified, default to input's
             sample_out = sample_in
 
         # same as for the input data, but for the destination
         if isinstance(dst, str):
-            outfile = FilePathOutput(dst)
+            outfile = FilePathOutput(dst, encoding_out, sample_out, channels_out)
         elif dst is np.ndarray:
             outfile = NumpyArrayOutput(encoding_out, sample_out, channels_out)
         elif isinstance(dst, BufferedWriter):

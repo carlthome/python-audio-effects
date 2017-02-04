@@ -6,7 +6,8 @@ from subprocess import PIPE, run
 import numpy as np
 
 ENCODINGS_MAPPING = {np.int16: "s16",
-                     np.float32: "f32"}
+                     np.float32: "f32",
+                     np.float64: "f64"}
 
 PIPE_CHAR = "-"
 
@@ -63,9 +64,13 @@ class SoxOutput:
 
 class FilePathOutput(SoxOutput):
 
-    def __init__(self, filepath):
+    def __init__(self, filepath, encoding, samplerate, channels):
         super().__init__()
-        self.cmd_suffix = filepath
+        self.cmd_suffix = ' '.join(["-t " + ENCODINGS_MAPPING[encoding],
+                                    "-r " + str(samplerate),
+                                    "-c " + str(channels),
+                                    filepath,
+                                    ])
 
 
 class FileBufferOutput(SoxOutput):
