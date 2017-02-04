@@ -2,8 +2,8 @@
 """A lightweight Python wrapper of SoX's effects."""
 import logging
 import shlex
+from io import BufferedReader, BufferedWriter
 from subprocess import PIPE, Popen
-from warnings import warn
 
 import numpy as np
 
@@ -11,6 +11,8 @@ import numpy as np
 # Sox command doc at http://sox.sourceforge.net/sox.html
 # some more examples http://tldp.org/LDP/LG/issue73/chung.html
 # more examples http://dsl.org/cookbook/cookbook_29.html
+from pysndfx.snfiles import FilePathInput, FileBufferInput, NumpyArrayInput, FilePathOutput, NumpyArrayOutput, \
+    FileBufferOutput
 
 
 class InvalidEffectParameter(Exception):
@@ -272,57 +274,48 @@ class AudioEffectsChain:
     def __call__(self,
                  src,
                  dst=np.ndarray,
-                 samplerate=44100,
+                 sample_in=44100,
+                 sample_out=44100,
+                 encoding_out=None,
+                 channels_out=None,
                  allow_clipping=True):
 
-        # Shared SoX flags.
-        encoding = '-t f32'
-        samplerate = '-r ' + str(samplerate)
-        pipe = '-'
-
-        # Parse input flags.
-        infile = '-d'
-        stdin = None
         if isinstance(src, str):
-            infile = src
-            logging.debug("Running info command : %s" % 'sox --i -c ' + src)
-            stdout, stderr = Popen(
-                shlex.split(
-                    'sox --i -c ' + src, posix=False),
-                stdout=PIPE,
-                stderr=PIPE).communicate()
-            channels = '-c ' + str(int(stdout))
+            infile = FilePathInput(src)
         elif isinstance(src, np.ndarray):
-            channels = '-c ' + str(src.ndim)
-            infile = ' '.join([
-                encoding,
-                samplerate,
-                channels,
-                pipe,
-            ])
-            stdin = src.tobytes(order='F')
+            infile = NumpyArrayInput(src, sample_in)
+        elif isinstance(src, BufferedReader):
+            infile = FileBufferInput(src)
+            src = infile.data # retrieving the data from the file reader (np array)
+        else:
+            infile = None
+            # stdin = src.tobytes(order='F')
 
-        # Parse output flags.
-        outfile = '-d'
+        if encoding_out is None:
+            encoding_out = src.dtype if isinstance(src, np.ndarray) else np.float32
+
+        if channels_out is None:
+            channels_out = infile.channels
+
         if isinstance(dst, str):
-            outfile = dst
-        elif dst is np.ndarray:
-            outfile = ' '.join([
-                encoding,
-                samplerate,
-                channels,
-                pipe,
-            ])
+            outfile = FilePathOutput(dst)
+        elif isinstance(dst, np.ndarray):
+            outfile = NumpyArrayOutput(encoding_out, sample_out, channels_out)
+        elif isinstance(dst, BufferedWriter):
+            outfile = FileBufferOutput(dst, sample_out, channels_out)
+        else:
+            outfile = None
 
         cmd = shlex.split(
             ' '.join([
                 'sox',
                 '-N',
                 '-V1' if allow_clipping else '-V2',
-                infile,
-                outfile,
+                infile.cmd_prefix,
+                outfile.cmd_suffix,
             ] + list(map(str, self.command))),
             posix=False)
+
         logging.debug("Running command : %s" % cmd)
         stdout, stderr = Popen(
             cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin)
