@@ -1,14 +1,14 @@
 import logging
 import shlex
 import wave
-from subprocess import Popen, PIPE
+from subprocess import PIPE, run
 
 import numpy as np
 
 ENCODINGS_MAPPING = {np.int16: "s16",
                      np.float32: "f32"}
 
-PIPE = "-"
+PIPE_CHAR = "-"
 
 class SoxInput:
     pipe = "-"
@@ -21,12 +21,11 @@ class FilePathInput(SoxInput):
 
     def __init__(self, filepath):
         super().__init__()
-        logging.debug("Running info command : %s" % 'sox --i -c ' + src)
-        stdout, stderr = Popen(
-            shlex.split(
-                'sox --i -c ' + filepath, posix=False),
-            stdout=PIPE,
-            stderr=PIPE).communicate()
+        info_cmd = 'sox --i -c ' + filepath
+        logging.debug("Running info command : %s" % info_cmd)
+        stdout = run(shlex.split(info_cmd, posix=False),
+                     stdout=PIPE,
+                     stderr=PIPE).stdout
         self.channels = int(stdout)
         self.cmd_prefix = filepath
 
@@ -35,13 +34,13 @@ class FileBufferInput(SoxInput):
 
     def __init__(self, fp):
         super().__init__()
-        wave_file = wave.open(fp, mode="rb") # only seems to support 16bit encodings
+        wave_file = wave.open(fp, mode="rb") # wave.open() seems to support only 16bit encodings
         self.channels = wave_file.getnchannels()
         self.data = np.frombuffer(wave_file.readframes(wave_file.getnframes()), dtype=np.int16)
-        self.cmd_prefix = ' '.join(["-t s16", # int16
+        self.cmd_prefix = ' '.join(["-t s16", # int16 encoding by default
                                     "-r " + str(wave_file.getframerate()),
-                                    "-c "+ str(self.channels),
-                                    PIPE
+                                    "-c " + str(self.channels),
+                                    PIPE_CHAR
                                     ])
 
 
@@ -50,10 +49,10 @@ class NumpyArrayInput(SoxInput):
     def __init__(self, snd_array, rate):
         super().__init__()
         self.channels = snd_array.ndim
-        self.cmd_prefix = ' '.join(["-t " + ENCODINGS_MAPPING[snd_array.dtype],
+        self.cmd_prefix = ' '.join(["-t " + ENCODINGS_MAPPING[snd_array.dtype.type],
                                     "-r " + str(rate),
                                     "-c " + str(self.channels),
-                                    PIPE
+                                    PIPE_CHAR
                                     ])
 
 class SoxOutput:
@@ -79,7 +78,7 @@ class FileBufferOutput(SoxOutput):
         self.cmd_suffix = ' '.join(["-t " + ENCODINGS_MAPPING[np.int16],
                                     "-r " + str(samplerate),
                                     "-c " + channels,
-                                    PIPE,
+                                    PIPE_CHAR,
                                     ])
 
     def write(self, data):
@@ -92,6 +91,6 @@ class NumpyArrayOutput(SoxOutput):
         super().__init__()
         self.cmd_suffix = ' '.join(["-t " + ENCODINGS_MAPPING[encoding],
                                     "-r " + str(samplerate),
-                                    "-c " + channels,
-                                    PIPE,
+                                    "-c " + str(channels),
+                                    PIPE_CHAR,
                                     ])

@@ -3,7 +3,7 @@
 import logging
 import shlex
 from io import BufferedReader, BufferedWriter
-from subprocess import PIPE, Popen
+from subprocess import PIPE, Popen, run
 
 import numpy as np
 
@@ -275,31 +275,37 @@ class AudioEffectsChain:
                  src,
                  dst=np.ndarray,
                  sample_in=44100,
-                 sample_out=44100,
+                 sample_out=None,
                  encoding_out=None,
                  channels_out=None,
                  allow_clipping=True):
 
+        # depending on the input, using the right object to set up the input data arguments
+        stdin = None
         if isinstance(src, str):
             infile = FilePathInput(src)
         elif isinstance(src, np.ndarray):
             infile = NumpyArrayInput(src, sample_in)
+            stdin = src
         elif isinstance(src, BufferedReader):
             infile = FileBufferInput(src)
-            src = infile.data # retrieving the data from the file reader (np array)
+            stdin = infile.data # retrieving the data from the file reader (np array)
         else:
             infile = None
-            # stdin = src.tobytes(order='F')
 
+        # finding out which output encoding to use
         if encoding_out is None:
-            encoding_out = src.dtype if isinstance(src, np.ndarray) else np.float32
-
+            encoding_out = stdin.dtype.type if isinstance(stdin, np.ndarray) else np.float32
+        # finding out which channel count to use (defaults to the input file's channel count)
         if channels_out is None:
             channels_out = infile.channels
+        if sample_out is None:
+            sample_out = sample_in
 
+        # same as for the input data, but for the destination
         if isinstance(dst, str):
             outfile = FilePathOutput(dst)
-        elif isinstance(dst, np.ndarray):
+        elif dst is np.ndarray:
             outfile = NumpyArrayOutput(encoding_out, sample_out, channels_out)
         elif isinstance(dst, BufferedWriter):
             outfile = FileBufferOutput(dst, sample_out, channels_out)
@@ -311,20 +317,22 @@ class AudioEffectsChain:
                 'sox',
                 '-N',
                 '-V1' if allow_clipping else '-V2',
-                infile.cmd_prefix,
-                outfile.cmd_suffix,
+                infile.cmd_prefix if infile is not None else "-d",
+                outfile.cmd_suffix if outfile is not None else "-d",
             ] + list(map(str, self.command))),
             posix=False)
 
         logging.debug("Running command : %s" % cmd)
-        stdout, stderr = Popen(
-            cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin)
-        if stderr:
-            raise RuntimeError(stderr.decode())
-        if stdout:
-            outsound = np.fromstring(stdout, dtype=np.float32)
-            c = int(channels.split()[-1])
-            if c > 1:
-                outsound = outsound.reshape(
-                    (c, int(len(outsound) / c)), order='F')
+        if isinstance(stdin, np.ndarray):
+            result = run(cmd, stdout=PIPE, stderr=PIPE, input=stdin.tobytes(order="f"))
+        else:
+            result = run(cmd, stdout=PIPE, stderr=PIPE)
+
+        if result.stderr:
+            raise RuntimeError(result.stderr.decode())
+        elif result.stdout:
+            outsound = np.fromstring(result.stdout, dtype=encoding_out)
+            if channels_out > 1:
+                outsound = outsound.reshape((channels_out, int(len(outsound) / channels_out)),
+                                            order='F')
             return outsound
