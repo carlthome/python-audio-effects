@@ -335,4 +335,6 @@ class AudioEffectsChain:
             if channels_out > 1:
                 outsound = outsound.reshape((channels_out, int(len(outsound) / channels_out)),
                                             order='F')
+            if isinstance(outfile, FileBufferOutput):
+                outfile.write(outsound)
             return outsound

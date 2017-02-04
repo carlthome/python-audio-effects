@@ -75,14 +75,15 @@ class FileBufferOutput(SoxOutput):
         self.writer = wave.open(fp, mode="wb")
         self.writer.setnchannels(channels)
         self.writer.setframerate(samplerate)
+        self.writer.setsampwidth(2)
         self.cmd_suffix = ' '.join(["-t " + ENCODINGS_MAPPING[np.int16],
                                     "-r " + str(samplerate),
-                                    "-c " + channels,
+                                    "-c " + str(channels),
                                     PIPE_CHAR,
                                     ])
 
     def write(self, data):
-        self.writer.writeframes(data)
+        self.writer.writeframesraw(data)
 
 
 class NumpyArrayOutput(SoxOutput):
