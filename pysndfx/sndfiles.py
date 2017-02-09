@@ -64,10 +64,9 @@ class SoxOutput:
 
 class FilePathOutput(SoxOutput):
 
-    def __init__(self, filepath, encoding, samplerate, channels):
+    def __init__(self, filepath, samplerate, channels):
         super().__init__()
-        self.cmd_suffix = ' '.join(["-t " + ENCODINGS_MAPPING[encoding],
-                                    "-r " + str(samplerate),
+        self.cmd_suffix = ' '.join(["-r " + str(samplerate),
                                     "-c " + str(channels),
                                     filepath,
                                     ])

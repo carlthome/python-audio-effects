@@ -11,7 +11,7 @@ import numpy as np
 # Sox command doc at http://sox.sourceforge.net/sox.html
 # some more examples http://tldp.org/LDP/LG/issue73/chung.html
 # more examples http://dsl.org/cookbook/cookbook_29.html
-from pysndfx.snfiles import FilePathInput, FileBufferInput, NumpyArrayInput, FilePathOutput, NumpyArrayOutput, \
+from pysndfx.sndfiles import FilePathInput, FileBufferInput, NumpyArrayInput, FilePathOutput, NumpyArrayOutput, \
     FileBufferOutput
 
 
@@ -295,6 +295,7 @@ class AudioEffectsChain:
         stdin = None
         if isinstance(src, str):
             infile = FilePathInput(src)
+            stdin = src
         elif isinstance(src, np.ndarray):
             infile = NumpyArrayInput(src, sample_in)
             stdin = src
@@ -304,9 +305,12 @@ class AudioEffectsChain:
         else:
             infile = None
 
-        # finding out which output encoding to use
-        if encoding_out is None:
-            encoding_out = stdin.dtype.type if isinstance(stdin, np.ndarray) else np.float32
+        # finding out which output encoding to use in case the output is ndarray
+        if encoding_out is None and dst is np.ndarray:
+            if isinstance(stdin, np.ndarray):
+                encoding_out = stdin.dtype.type
+            elif isinstance(stdin,  str):
+                encoding_out = np.float32
         # finding out which channel count to use (defaults to the input file's channel count)
         if channels_out is None:
             channels_out = infile.channels
@@ -315,7 +319,7 @@ class AudioEffectsChain:
 
         # same as for the input data, but for the destination
         if isinstance(dst, str):
-            outfile = FilePathOutput(dst, encoding_out, sample_out, channels_out)
+            outfile = FilePathOutput(dst, sample_out, channels_out)
         elif dst is np.ndarray:
             outfile = NumpyArrayOutput(encoding_out, sample_out, channels_out)
         elif isinstance(dst, BufferedWriter):
