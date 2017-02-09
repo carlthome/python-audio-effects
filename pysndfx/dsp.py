@@ -98,8 +98,7 @@ class AudioEffectsChain:
         self.command.append(gain_in)
         self.command.append(gain_out)
         for decay in decays:
-            modulation = decay.pop()
-            numerical = decay
+            *numerical, modulation = decay
             self.command.append(" ".join(map(str, numerical)) + " -" + modulation)
         return self
 
