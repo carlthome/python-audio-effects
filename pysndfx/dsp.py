@@ -3,7 +3,7 @@
 import logging
 import shlex
 from io import BufferedReader, BufferedWriter
-from subprocess import PIPE, Popen, run
+from subprocess import PIPE, Popen
 
 import numpy as np
 
@@ -98,7 +98,8 @@ class AudioEffectsChain:
         self.command.append(gain_in)
         self.command.append(gain_out)
         for decay in decays:
-            *numerical, modulation = decay
+            modulation = decay.pop()
+            numerical = decay
             self.command.append(" ".join(map(str, numerical)) + " -" + modulation)
         return self
 
@@ -339,14 +340,14 @@ class AudioEffectsChain:
 
         logging.debug("Running command : %s" % cmd)
         if isinstance(stdin, np.ndarray):
-            result = run(cmd, stdout=PIPE, stderr=PIPE, input=stdin.tobytes(order="f"))
+            stdout, stderr = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin.tobytes(order="F"))
         else:
-            result = run(cmd, stdout=PIPE, stderr=PIPE)
+            stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
 
-        if result.stderr:
-            raise RuntimeError(result.stderr.decode())
-        elif result.stdout:
-            outsound = np.fromstring(result.stdout, dtype=encoding_out)
+        if stderr:
+            raise RuntimeError(stderr.decode())
+        elif stdout:
+            outsound = np.fromstring(stdout, dtype=encoding_out)
             if channels_out > 1:
                 outsound = outsound.reshape((channels_out, int(len(outsound) / channels_out)),
                                             order='F')
