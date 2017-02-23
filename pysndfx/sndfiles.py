@@ -11,7 +11,8 @@ ENCODINGS_MAPPING = {np.int16: "s16",
 
 PIPE_CHAR = "-"
 
-class SoxInput:
+
+class SoxInput(object):
     pipe = "-"
 
     def __init__(self):
