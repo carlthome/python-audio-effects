@@ -57,7 +57,8 @@ class NumpyArrayInput(SoxInput):
                                     PIPE_CHAR
                                     ])
 
-class SoxOutput:
+
+class SoxOutput(object):
 
     def __init__(self):
         self.cmd_suffix = None
