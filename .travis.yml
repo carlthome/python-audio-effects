@@ -14,11 +14,15 @@ addons:
       - vorbis-tools
       - sox
 
+before_install:
+  - pip install Cython
+
 install: 
   - pip install .
 
 script: 
-  - python setup.py test
+  - pip install pytest librosa
+  - pytest
 
 before_deploy:
   - pandoc --from=markdown --to=rst --output=README.rst README.md
