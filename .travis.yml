@@ -11,7 +11,7 @@ cache: pip
 addons:
   apt:
     packages:
-      - vorbis-tools
+      - libav-tools
       - sox
 
 before_install:
