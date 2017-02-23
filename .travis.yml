@@ -1,42 +1,29 @@
+dist: trusty
+
 language: python
 
 python:
-  - "3.5"
+  - "3.6"
   - "2.7"
   
-cache:
-  directories:
-    - "$HOME/miniconda2"
-    - "$HOME/miniconda3"
-    
+cache: pip
+
 addons:
   apt:
     packages:
       - vorbis-tools
       - sox
-    
-before_install:   
-  - if [ "$TRAVIS_PYTHON_VERSION" == "2.7" ]; then
-      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O miniconda.sh;
-      export MINICONDA="$HOME/miniconda2";
-    else
-      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-      export MINICONDA="$HOME/miniconda3";
-    fi
-  - bash miniconda.sh -bfp "$MINICONDA"
-  - export PATH="$MINICONDA/bin:$PATH"
-  - conda install -yc conda-forge pandoc numpy scikit-learn librosa
 
-install:
-  - python setup.py install
+install: 
+  - pip install .
 
-script:
-  - python setup.py test
-  
+script: 
+  - pytest
+
 before_deploy:
   - pandoc --from=markdown --to=rst --output=README.rst README.md
   - rm README.md
-
+  
 deploy:
   provider: pypi
   user: carlthome
