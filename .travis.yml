@@ -13,7 +13,7 @@ before_install: pip install Cython # TODO This shouldn't be needed.
 install: pip install .
 before_script: pip install pytest librosa
 script: pytest
-before_deploy: pandoc --from=markdown --to=rst --output=README.rst README.md
+after_script: pandoc --from=markdown --to=rst --output=README.rst README.md
 deploy:
   provider: pypi
   user: carlthome
