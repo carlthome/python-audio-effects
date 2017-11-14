@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pysndfx',
-    version='0.1.1',
+    version='0.1.2',
     description='Apply audio effects such as reverb and EQ directly to audio files or NumPy ndarrays.',
     url='https://github.com/carlthome/python-audio-effects',
     author='Carl Thomé',
