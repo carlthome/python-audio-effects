@@ -1,33 +1,19 @@
-dist: trusty
-
 language: python
-
 python:
-  - "3.6"
-  - "2.7"
-  
+- "3.6"
+- "2.7"
 cache: pip
-
 addons:
   apt:
     packages:
-      - libav-tools
-      - sox
-
-before_install:
-  - pip install Cython
-
-install: 
-  - pip install .
-
-script: 
-  - pip install pytest librosa
-  - pytest
-
-before_deploy:
-  - pandoc --from=markdown --to=rst --output=README.rst README.md
-  - rm README.md
-  
+    - libav-tools
+    - sox
+    - pandoc
+before_install: pip install Cython # TODO This shouldn't be needed.
+install: pip install .
+before_script: pip install pytest librosa
+script: pytest
+before_deploy: pandoc --from=markdown --to=rst --output=README.rst README.md
 deploy:
   provider: pypi
   user: carlthome
