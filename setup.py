@@ -23,6 +23,4 @@ setup(
     keywords='audio music sound',
     packages=find_packages(),
     install_requires=['numpy'],
-    include_package_data=True,
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest', 'librosa'])
+    include_package_data=True)
