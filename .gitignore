@@ -91,3 +91,6 @@ ENV/
 # IntelliJ IDEA
 .iml
 .idea
+
+# local test file
+testing.py

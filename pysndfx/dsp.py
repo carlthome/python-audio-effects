@@ -1,10 +1,22 @@
 # coding=utf-8
 """A lightweight Python wrapper of SoX's effects."""
+import logging
 import shlex
+from io import BufferedReader, BufferedWriter
 from subprocess import PIPE, Popen
-from warnings import warn
 
 import numpy as np
+
+# Use this page for examples https://linux.die.net/man/1/soxexam
+# Sox command doc at http://sox.sourceforge.net/sox.html
+# some more examples http://tldp.org/LDP/LG/issue73/chung.html
+# more examples http://dsl.org/cookbook/cookbook_29.html
+from pysndfx.sndfiles import FilePathInput, FileBufferInput, NumpyArrayInput, FilePathOutput, NumpyArrayOutput, \
+    FileBufferOutput
+
+
+class InvalidEffectParameter(Exception):
+    pass
 
 
 class AudioEffectsChain:
@@ -71,12 +83,24 @@ class AudioEffectsChain:
         raise NotImplemented()
         return self
 
-    def bend(self):
-        raise NotImplemented()
+    def bend(self, bends, frame_rate=None, over_sample=None):
+        self.command.append("bend")
+        if frame_rate is not None and isinstance(frame_rate, int):
+            self.command.append("-f %s" % frame_rate)
+        if over_sample is not None and isinstance(over_sample, int):
+            self.command.append("-o %s" % over_sample)
+        for bend in bends:
+            self.command.append(",".join(bend))
         return self
 
-    def chorus(self):
-        raise NotImplemented()
+    def chorus(self, gain_in, gain_out, decays):
+        self.command.append("chorus")
+        self.command.append(gain_in)
+        self.command.append(gain_out)
+        for decay in decays:
+            modulation = decay.pop()
+            numerical = decay
+            self.command.append(" ".join(map(str, numerical)) + " -" + modulation)
         return self
 
     def delay(self,
@@ -90,6 +114,9 @@ class AudioEffectsChain:
         self.command.append(gain_out)
         self.command.extend(list(sum(zip(delays, decays), ())))
         return self
+
+    def echo(self, **kwargs):
+        self.delay(**kwargs)
 
     def fade(self):
         raise NotImplemented()
@@ -125,8 +152,10 @@ class AudioEffectsChain:
         raise NotImplemented()
         return self
 
-    def overdrive(self):
-        raise NotImplemented()
+    def overdrive(self, gain=20, colour=20):
+        self.command.append('overdrive')
+        self.command.append(gain)
+        self.command.append(colour)
         return self
 
     def phaser(self,
@@ -148,8 +177,19 @@ class AudioEffectsChain:
             self.command.append('-s')
         return self
 
-    def pitch(self):
-        raise NotImplemented()
+    def pitch(self, shift,
+              use_tree=False,
+              segment=82,
+              search=14.68,
+              overlap=12):
+
+        self.command.append("pitch")
+        if use_tree:
+            self.command.append("-q")
+        self.command.append(shift)
+        self.command.append(segment)
+        self.command.append(search)
+        self.command.append(overlap)
         return self
 
     def loop(self):
@@ -177,15 +217,16 @@ class AudioEffectsChain:
         return self
 
     def reverse(self):
-        raise NotImplemented()
+        self.command.append("reverse")
         return self
 
     def silence(self):
         raise NotImplemented()
         return self
 
-    def speed(self):
-        raise NotImplemented()
+    def speed(self, factor, use_semitones=False):
+        self.command.append("speed")
+        self.command.append(factor if not use_semitones else str(factor) + "c")
         return self
 
     def synth(self):
@@ -193,91 +234,123 @@ class AudioEffectsChain:
         raise NotImplemented()
         return self
 
-    def tempo(self):
-        raise NotImplemented()
+    def tempo(self, factor,
+              use_tree=False,
+              opt_flag=None,
+              segment=82,
+              search=14.68,
+              overlap=12):
+        self.command.append("pitch")
+        if use_tree:
+            self.command.append("-q")
+        if opt_flag in ("l", "m", "s"):
+            self.command.append("-%s" % opt_flag)
+        self.command.append(factor)
+        self.command.append(segment)
+        self.command.append(search)
+        self.command.append(overlap)
         return self
 
-    def tremolo(self):
-        raise NotImplemented()
+    def tremolo(self, freq, depth=40):
+        self.command.append("tremolo")
+        self.command.append(freq)
+        self.command.append(depth)
         return self
 
-    def trim(self):
-        raise NotImplemented()
+    def trim(self, positions):
+        self.command.append("trim")
+        for position in positions:
+            # TODO: check if the position means something
+            self.command.append(position)
         return self
 
-    def upsample(self):
-        raise NotImplemented()
+    def upsample(self, factor):
+        self.command.append("upsample")
+        self.command.append(factor)
         return self
 
     def vad(self):
         raise NotImplemented()
         return self
 
-    def vol(self):
-        raise NotImplemented()
+    def vol(self, gain, type="amplitude", limiter_gain=None):
+        self.command.append("vol")
+        if type in ["amplitude", "power", "dB"]:
+            self.command.append(type)
+        else:
+            raise InvalidEffectParameter("Type has to be dB, amplitude or power")
+        if limiter_gain is not None:
+            self.command.append(str(limiter_gain))
         return self
 
     def __call__(self,
                  src,
                  dst=np.ndarray,
-                 samplerate=44100,
+                 sample_in=44100, # used only for arrays
+                 sample_out=None,
+                 encoding_out=None,
+                 channels_out=None,
                  allow_clipping=True):
 
-        # Shared SoX flags.
-        encoding = '-t f32'
-        samplerate = '-r ' + str(samplerate)
-        pipe = '-'
-
-        # Parse input flags.
-        infile = '-d'
+        # depending on the input, using the right object to set up the input data arguments
         stdin = None
         if isinstance(src, str):
-            infile = src
-            stdout, stderr = Popen(
-                shlex.split(
-                    'sox --i -c ' + src, posix=False),
-                stdout=PIPE,
-                stderr=PIPE).communicate()
-            channels = '-c ' + str(int(stdout))
+            infile = FilePathInput(src)
+            stdin = src
         elif isinstance(src, np.ndarray):
-            channels = '-c ' + str(src.ndim)
-            infile = ' '.join([
-                encoding,
-                samplerate,
-                channels,
-                pipe,
-            ])
-            stdin = src.tobytes(order='F')
+            infile = NumpyArrayInput(src, sample_in)
+            stdin = src
+        elif isinstance(src, BufferedReader):
+            infile = FileBufferInput(src)
+            stdin = infile.data # retrieving the data from the file reader (np array)
+        else:
+            infile = None
 
-        # Parse output flags.
-        outfile = '-d'
+        # finding out which output encoding to use in case the output is ndarray
+        if encoding_out is None and dst is np.ndarray:
+            if isinstance(stdin, np.ndarray):
+                encoding_out = stdin.dtype.type
+            elif isinstance(stdin,  str):
+                encoding_out = np.float32
+        # finding out which channel count to use (defaults to the input file's channel count)
+        if channels_out is None:
+            channels_out = infile.channels
+        if sample_out is None: #if the output samplerate isn't specified, default to input's
+            sample_out = sample_in
+
+        # same as for the input data, but for the destination
         if isinstance(dst, str):
-            outfile = dst
+            outfile = FilePathOutput(dst, sample_out, channels_out)
         elif dst is np.ndarray:
-            outfile = ' '.join([
-                encoding,
-                samplerate,
-                channels,
-                pipe,
-            ])
+            outfile = NumpyArrayOutput(encoding_out, sample_out, channels_out)
+        elif isinstance(dst, BufferedWriter):
+            outfile = FileBufferOutput(dst, sample_out, channels_out)
+        else:
+            outfile = None
 
         cmd = shlex.split(
             ' '.join([
                 'sox',
                 '-N',
                 '-V1' if allow_clipping else '-V2',
-                infile,
-                outfile,
+                infile.cmd_prefix if infile is not None else "-d",
+                outfile.cmd_suffix if outfile is not None else "-d",
             ] + list(map(str, self.command))),
             posix=False)
-        stdout, stderr = Popen(
-            cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin)
+
+        logging.debug("Running command : %s" % cmd)
+        if isinstance(stdin, np.ndarray):
+            stdout, stderr = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin.tobytes(order="F"))
+        else:
+            stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
+
         if stderr:
             raise RuntimeError(stderr.decode())
-        if stdout:
-            outsound = np.fromstring(stdout, dtype=np.float32)
-            c = int(channels.split()[-1])
-            if c > 1:
-                outsound = outsound.reshape(
-                    (c, int(len(outsound) / c)), order='F')
+        elif stdout:
+            outsound = np.fromstring(stdout, dtype=encoding_out)
+            if channels_out > 1:
+                outsound = outsound.reshape((channels_out, int(len(outsound) / channels_out)),
+                                            order='F')
+            if isinstance(outfile, FileBufferOutput):
+                outfile.write(outsound)
             return outsound
