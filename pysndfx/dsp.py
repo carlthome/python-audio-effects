@@ -89,6 +89,7 @@ class AudioEffectsChain:
              right_t=None, right_n=None,
              attenuation=None, beta=None,
              phase=None, M=None, I=None, L=None):
+        self.command.append("sinc")
         if not mutually_exclusive(attenuation, beta):
             raise RuntimeError("Attenuation (-a) and beta (-b) are mutually exclusive arguments")
         if attenuation is not None and beta is None:
