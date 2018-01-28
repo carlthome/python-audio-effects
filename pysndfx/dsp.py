@@ -134,6 +134,7 @@ class AudioEffectsChain:
         if right_n is not None:
             self.command.append("-n")
             self.command.append(str(right_n))
+        return self
 
     def bend(self, bends, frame_rate=None, over_sample=None):
         self.command.append("bend")
