@@ -336,6 +336,10 @@ class AudioEffectsChain:
             self.command.append(str(limiter_gain))
         return self
 
+    def custom(self, command_str):
+        self.command.append(command_str)
+        return self
+
     def __call__(self,
                  src,
                  dst=np.ndarray,
