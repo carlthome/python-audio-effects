@@ -8,12 +8,10 @@ addons:
     packages:
     - libav-tools
     - sox
-    - pandoc
-before_install: pip install Cython # TODO This shouldn't be needed.
+before_install: pip install cython # TODO This shouldn't be needed.
 install: pip install .
-before_script: pip install pytest librosa
-script: pytest
-after_script: pandoc --to=rst --output=README.rst README.md # TODO https://github.com/pypa/packaging-problems/issues/46
+before_script: pip install pytest pytest-pep8 pytest-cov librosa
+script: pytest --cov=pysndfx --pep8
 deploy:
   provider: pypi
   user: carlthome
