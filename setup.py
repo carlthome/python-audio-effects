@@ -1,10 +1,10 @@
 # coding=utf-8
 """Install config."""
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='pysndfx',
-    version='0.2.0',
+    version='0.2.1',
     description='Apply audio effects such as reverb and EQ directly to audio files or NumPy ndarrays.',
     url='https://github.com/carlthome/python-audio-effects',
     author='Carl Thomé',
@@ -21,6 +21,5 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
     keywords='audio music sound',
-    packages=find_packages(),
-    install_requires=['numpy'],
-    include_package_data=True)
+    packages=['pysndfx'],
+    install_requires=['numpy'])
