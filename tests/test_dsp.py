@@ -54,8 +54,3 @@ def test_file_to_ndarray():
     y = apply_audio_effects(infile)
     lr.output.write_wav('test_file_to_ndarray.wav', y, sr)
     assert lr.util.valid_audio(y, mono=False)
-
-
-# TODO How do we test this properly?
-#def test_streaming():
-#    c(None, None)
