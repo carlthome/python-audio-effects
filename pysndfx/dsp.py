@@ -16,8 +16,7 @@ from pysndfx.sndfiles import FilePathInput, FileBufferInput, NumpyArrayInput, Fi
 
 
 def mutually_exclusive(*args):
-    are_none = map(lambda x: x is not None, args)
-    return sum(are_none) in [0, 1]
+    return sum(arg is not None for arg in args) < 2
 
 
 class AudioEffectsChain:
@@ -84,14 +83,14 @@ class AudioEffectsChain:
         raise NotImplemented()
         return self
 
-    def sinc(self, hpfreq=None, lpfreq=None,
+    def sinc(self, high_pass_frequency=None, low_pass_frequency=None,
              left_t=None, left_n=None,
              right_t=None, right_n=None,
              attenuation=None, beta=None,
              phase=None, M=None, I=None, L=None):
         self.command.append("sinc")
         if not mutually_exclusive(attenuation, beta):
-            raise RuntimeError("Attenuation (-a) and beta (-b) are mutually exclusive arguments")
+            raise ValueError("Attenuation (-a) and beta (-b) are mutually exclusive arguments")
         if attenuation is not None and beta is None:
             self.command.append("-a")
             self.command.append(str(attenuation))
@@ -100,7 +99,7 @@ class AudioEffectsChain:
             self.command.append(str(beta))
 
         if not mutually_exclusive(phase, M, I, L):
-            raise RuntimeError("Phase (-p), -M, L, and -I are mutually exclusive arguments")
+            raise ValueError("Phase (-p), -M, L, and -I are mutually exclusive arguments")
         if phase is not None:
             self.command.append("-p")
             self.command.append(str(phase))
@@ -112,7 +111,7 @@ class AudioEffectsChain:
             self.command.append("-L")
 
         if not mutually_exclusive(left_t, left_t):
-            raise RuntimeError("Transition bands options (-t or -n) are mutually exclusive")
+            raise ValueError("Transition bands options (-t or -n) are mutually exclusive")
         if left_t is not None:
             self.command.append("-t")
             self.command.append(str(left_t))
@@ -120,15 +119,15 @@ class AudioEffectsChain:
             self.command.append("-n")
             self.command.append(str(left_n))
         
-        if hpfreq is not None and lpfreq is None:
-            self.command.append(str(hpfreq))
-        elif hpfreq is not None and lpfreq is not None:
-            self.command.append(str(hpfreq)+ "-" + str(lpfreq))
-        elif hpfreq is None and lpfreq is not None:
-            self.command.append(str(lpfreq))
+        if high_pass_frequency is not None and low_pass_frequency is None:
+            self.command.append(str(high_pass_frequency))
+        elif high_pass_frequency is not None and low_pass_frequency is not None:
+            self.command.append(str(high_pass_frequency) + "-" + str(low_pass_frequency))
+        elif high_pass_frequency is None and low_pass_frequency is not None:
+            self.command.append(str(low_pass_frequency))
 
         if not mutually_exclusive(right_t, right_t):
-            raise RuntimeError("Transition bands options (-t or -n) are mutually exclusive")
+            raise ValueError("Transition bands options (-t or -n) are mutually exclusive")
         if right_t is not None:
             self.command.append("-t")
             self.command.append(str(right_t))
@@ -338,6 +337,8 @@ class AudioEffectsChain:
         return self
 
     def custom(self, command_str):
+        """Example value for command_str : 'echo 0.8 0.9 1000 0.3'
+        for an echo effect"""
         self.command.append(command_str)
         return self
 
