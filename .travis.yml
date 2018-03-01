@@ -10,8 +10,10 @@ addons:
     - sox
 before_install: pip install cython # TODO This shouldn't be needed.
 install: pip install .
-before_script: pip install pytest pytest-pep8 pytest-cov librosa
-script: pytest --cov=. --pep8
+before_script: pip install pytest-cov librosa flake8
+script:
+- pytest --cov=pysndfx
+- flake8
 deploy:
   provider: pypi
   user: carlthome
