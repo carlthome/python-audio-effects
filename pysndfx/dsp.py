@@ -7,12 +7,7 @@ from subprocess import PIPE, Popen
 
 import numpy as np
 
-# Use this page for examples https://linux.die.net/man/1/soxexam
-# Sox command doc at http://sox.sourceforge.net/sox.html
-# some more examples http://tldp.org/LDP/LG/issue73/chung.html
-# more examples http://dsl.org/cookbook/cookbook_29.html
-from pysndfx.sndfiles import FilePathInput, FileBufferInput, NumpyArrayInput, FilePathOutput, NumpyArrayOutput, \
-    FileBufferOutput
+from .sndfiles import FilePathInput, FileBufferInput, NumpyArrayInput, FilePathOutput, NumpyArrayOutput, FileBufferOutput
 
 
 def mutually_exclusive(*args):
@@ -83,11 +78,19 @@ class AudioEffectsChain:
         raise NotImplemented()
         return self
 
-    def sinc(self, high_pass_frequency=None, low_pass_frequency=None,
-             left_t=None, left_n=None,
-             right_t=None, right_n=None,
-             attenuation=None, beta=None,
-             phase=None, M=None, I=None, L=None):
+    def sinc(self,
+             high_pass_frequency=None,
+             low_pass_frequency=None,
+             left_t=None,
+             left_n=None,
+             right_t=None,
+             right_n=None,
+             attenuation=None,
+             beta=None,
+             phase=None,
+             M=None,
+             I=None,
+             L=None):
         self.command.append("sinc")
         if not mutually_exclusive(attenuation, beta):
             raise ValueError("Attenuation (-a) and beta (-b) are mutually exclusive arguments")
@@ -273,21 +276,17 @@ class AudioEffectsChain:
         self.command.append("reverse")
         return self
 
-    def silence(self):
-        raise NotImplemented()
-        return self
-
     def speed(self, factor, use_semitones=False):
         self.command.append("speed")
         self.command.append(factor if not use_semitones else str(factor) + "c")
         return self
 
     def synth(self):
-        # Maybe skip this entirely?
         raise NotImplemented()
         return self
 
-    def tempo(self, factor,
+    def tempo(self,
+              factor,
               use_tree=False,
               opt_flag=None,
               segment=82,
@@ -336,10 +335,20 @@ class AudioEffectsChain:
             self.command.append(str(limiter_gain))
         return self
 
-    def custom(self, command_str):
-        """Example value for command_str : 'echo 0.8 0.9 1000 0.3'
-        for an echo effect"""
-        self.command.append(command_str)
+    def custom(self, command):
+        """Run arbitrary SoX effect commands.
+
+        Examples:
+            custom('echo 0.8 0.9 1000 0.3') for an echo effect.
+
+        References:
+            - https://linux.die.net/man/1/soxexam
+            - http://sox.sourceforge.net/sox.html
+            - http://tldp.org/LDP/LG/issue73/chung.html
+            - http://dsl.org/cookbook/cookbook_29.html
+
+        """
+        self.command.append(command)
         return self
 
     def __call__(self,
