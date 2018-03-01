@@ -1,11 +1,9 @@
 # coding=utf-8
 """Testing module for the DSP package, preferably run with py.test."""
-import numpy as np
 import librosa as lr
 import logging
 from pysndfx.dsp import AudioEffectsChain
 
-import logging
 logging.getLogger().setLevel(logging.DEBUG)
 
 apply_audio_effects = AudioEffectsChain()\
