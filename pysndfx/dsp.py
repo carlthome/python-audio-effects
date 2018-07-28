@@ -74,8 +74,10 @@ class AudioEffectsChain:
         self.command.append('-n')
         return self
 
-    def compand(self, attack=0.05, decay=0.5):
-        raise NotImplemented()
+    def compand(self, attack=0.2, decay=1, soft_knee=2.0, threshold=-20, db_from=-20.0, db_to=-20.0):
+        self.command.append('compand')
+        self.command.append(str(attack) + ',' + str(decay))
+        self.command.append(str(soft_knee) + ':' + str(threshold) + ',' + str(db_from) + ',' + str(db_to))
         return self
 
     def sinc(self,
