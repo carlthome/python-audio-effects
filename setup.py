@@ -2,6 +2,9 @@
 """Install config."""
 from setuptools import setup
 
+with open('README.md') as f:
+    long_description = f.read()
+
 setup(
     name='pysndfx',
     version='0.3.2',
@@ -10,6 +13,8 @@ setup(
     author='Carl Thomé',
     author_email='carlthome@gmail.com',
     license='MIT',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
