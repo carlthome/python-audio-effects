@@ -1,3 +1,5 @@
+sudo: true
+dist: xenial
 language: python
 python:
 - 3.7
@@ -7,7 +9,7 @@ cache: pip
 addons:
   apt:
     packages:
-    - libav-tools
+    - ffmpeg
     - sox
 before_install: pip install cython # TODO This shouldn't be needed.
 install: pip install .
