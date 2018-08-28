@@ -294,7 +294,7 @@ class AudioEffectsChain:
               segment=82,
               search=14.68,
               overlap=12):
-        self.command.append("pitch")
+        self.command.append("tempo")
         if use_tree:
             self.command.append("-q")
         if opt_flag in ("l", "m", "s"):
