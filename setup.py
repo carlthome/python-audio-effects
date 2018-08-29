@@ -7,7 +7,7 @@ with open('README.md') as f:
 
 setup(
     name='pysndfx',
-    version='0.3.4',
+    version='0.3.5',
     description='Apply audio effects such as reverb and EQ directly to audio files or NumPy ndarrays.',
     url='https://github.com/carlthome/python-audio-effects',
     author='Carl Thomé',
