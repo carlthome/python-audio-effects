@@ -4,7 +4,8 @@ import librosa as lr
 import logging
 from pysndfx.dsp import AudioEffectsChain
 
-logging.getLogger().setLevel(logging.DEBUG)
+logger = logging.getLogger("pysndfx")
+logger.setLevel(logging.DEBUG)
 
 apply_audio_effects = AudioEffectsChain()\
     .highshelf()\

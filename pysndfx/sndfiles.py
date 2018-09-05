@@ -11,6 +11,7 @@ ENCODINGS_MAPPING = {np.int16: "s16",
 
 PIPE_CHAR = "-"
 
+logger = logging.getLogger("pysndfx")
 
 class SoxInput(object):
     pipe = "-"
@@ -24,7 +25,7 @@ class FilePathInput(SoxInput):
     def __init__(self, filepath):
         super(FilePathInput, self).__init__()
         info_cmd = 'sox --i -c ' + filepath
-        logging.debug("Running info command : %s" % info_cmd)
+        logger.debug("Running info command : %s" % info_cmd)
         stdout, stderr = Popen(shlex.split(info_cmd, posix=False),
                                stdout=PIPE,
                                stderr=PIPE).communicate()

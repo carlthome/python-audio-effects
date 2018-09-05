@@ -7,7 +7,7 @@ from subprocess import PIPE, Popen
 
 import numpy as np
 
-from .sndfiles import FilePathInput, FileBufferInput, NumpyArrayInput, FilePathOutput, NumpyArrayOutput, FileBufferOutput
+from .sndfiles import logger, FilePathInput, FileBufferInput, NumpyArrayInput, FilePathOutput, NumpyArrayOutput, FileBufferOutput
 
 
 def mutually_exclusive(*args):
@@ -123,7 +123,7 @@ class AudioEffectsChain:
         if left_n is not None:
             self.command.append("-n")
             self.command.append(str(left_n))
-        
+
         if high_pass_frequency is not None and low_pass_frequency is None:
             self.command.append(str(high_pass_frequency))
         elif high_pass_frequency is not None and low_pass_frequency is not None:
@@ -408,7 +408,7 @@ class AudioEffectsChain:
             ] + list(map(str, self.command))),
             posix=False)
 
-        logging.debug("Running command : %s" % cmd)
+        logger.debug("Running command : %s" % cmd)
         if isinstance(stdin, np.ndarray):
             stdout, stderr = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin.tobytes(order="F"))
         else:
