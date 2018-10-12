@@ -2,21 +2,32 @@ os:
 - linux
 - windows
 - osx
-language: python
-python:
-- 3.7
-- 3.6
-- 2.7
-cache: pip
 addons:
   apt:
     packages:
     - ffmpeg
     - sox
-before_install: pip install cython # TODO This shouldn't be needed.
+before_install:
+
+- if [[ $TRAVIS_OS_NAME == 'windows' ]]
+  then
+    wget https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe
+    Miniconda3-latest-Windows-x86_64.exe /S /D=miniconda3
+  else
+    if [[ $TRAVIS_OS_NAME == 'linux' ]]
+    then
+      url=https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    elif [[ $TRAVIS_OS_NAME == 'osx' ]]
+    then
+      url=https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
+    fi
+
+    wget $url -o miniconda.sh
+    chmod +x miniconda.sh
+    ./miniconda.sh -bp
+
 install: pip install .
 before_script:
-- pip install joblib==0.11  # TODO Remove this line when librosa 0.6.2 is released (see https://github.com/librosa/librosa/issues/732#issuecomment-400669539)
 - pip install pytest-cov librosa
 script:
 - pytest --cov=pysndfx
