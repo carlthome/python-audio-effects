@@ -17,9 +17,10 @@ before_install:
   fi
 install: pip install . --user
 before_script:
-- pip install --user pytest-cov librosa
+- pip install --user pytest coverage librosa
 script:
-- pytest --cov=pysndfx
+- coverage run python -m pytest
+- coverage report
 deploy:
   provider: pypi
   user: carlthome
