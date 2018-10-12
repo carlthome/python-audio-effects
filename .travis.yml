@@ -25,6 +25,7 @@ before_install:
     wget $url -o miniconda.sh
     chmod +x miniconda.sh
     ./miniconda.sh -bp
+  fi
 
 install: pip install .
 before_script:
