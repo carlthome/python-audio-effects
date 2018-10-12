@@ -10,7 +10,7 @@ before_install:
     choco install sox.portable;
     choco install pip;
   elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
-    sudo apt-get install -y sox;
+    sudo apt-get install -y ffmpeg sox;
   elif [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     brew install sox;
   fi
