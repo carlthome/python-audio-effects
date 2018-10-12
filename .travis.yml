@@ -8,11 +8,9 @@ before_install:
 - if [[ $TRAVIS_OS_NAME == 'windows' ]]; then
     choco install sox.portable;
     choco install pip;
-  fi
-- if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
+  elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
     apt install sox;
-  fi
-- if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
+  elif [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     brew install sox;
   fi
 install: pip install .
