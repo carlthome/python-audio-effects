@@ -1,3 +1,4 @@
+language: sh
 os:
 - linux
 - windows
