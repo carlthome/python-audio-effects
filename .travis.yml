@@ -3,16 +3,15 @@ os:
 - linux
 - windows
 - osx
-dist: xenial
 before_install:
 - if [[ $TRAVIS_OS_NAME == 'windows' ]]; then
-    choco install ffmpeg;
+    choco install sox.portable;
   fi
 - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then
-    apt install ffmpeg;
+    apt install sox;
   fi
 - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
-    brew install ffmpeg;
+    brew install sox;
   fi
 install: pip install .
 before_script:
