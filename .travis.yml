@@ -20,7 +20,7 @@ install: pip install . --user
 before_script:
 - pip install --user pytest coverage librosa
 script:
-- coverage run python -m pytest
+- coverage run -m pytest
 - coverage report
 deploy:
   provider: pypi
