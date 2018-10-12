@@ -8,6 +8,7 @@ os:
 before_install:
 - if [[ $TRAVIS_OS_NAME == 'windows' ]]; then
     choco install sox.portable;
+    choco install python;
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py;
     python get-pip.py;
   elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
