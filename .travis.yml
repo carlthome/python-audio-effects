@@ -14,9 +14,9 @@ before_install:
   elif [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     brew install sox;
   fi
-install: pip install .
+install: pip install . --user
 before_script:
-- pip install pytest-cov librosa
+- pip install --user pytest-cov librosa
 script:
 - pytest --cov=pysndfx
 deploy:
