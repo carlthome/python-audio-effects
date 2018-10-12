@@ -9,7 +9,7 @@ before_install:
     choco install sox.portable;
     choco install pip;
   elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
-    apt install sox;
+    sudo apt install -y sox;
   elif [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     brew install sox;
   fi
