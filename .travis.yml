@@ -9,9 +9,8 @@ before_install:
 - if [[ $TRAVIS_OS_NAME == 'windows' ]]; then
     choco install sox.portable;
     choco install python;
-    refreshenv;
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py;
-    python get-pip.py;
+    python.exe get-pip.py;
   elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
     sudo apt-get install -y ffmpeg sox;
   elif [[ $TRAVIS_OS_NAME == 'osx' ]]; then
@@ -20,7 +19,7 @@ before_install:
 install: pip install . --user
 before_script:
 - pip install --user pytest coverage librosa
-- rehash
+- hash -r
 script:
 - coverage run -m pytest
 - coverage report
