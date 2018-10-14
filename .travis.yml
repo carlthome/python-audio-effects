@@ -20,6 +20,7 @@ before_install:
 install: pip install . --user
 before_script:
 - pip install --user pytest coverage librosa
+- rehash
 script:
 - coverage run -m pytest
 - coverage report
