@@ -10,7 +10,8 @@ before_install:
     choco install sox.portable;
     choco install python;
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py;
-    python.exe get-pip.py;
+    cmd.exe /c refreshenv;
+    python get-pip.py;
   elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
     sudo apt-get install -y ffmpeg sox;
   elif [[ $TRAVIS_OS_NAME == 'osx' ]]; then
