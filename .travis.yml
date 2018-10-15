@@ -9,6 +9,8 @@ before_install: |
   if [[ $TRAVIS_OS_NAME == 'windows' ]]
   then
     choco install miniconda3 --params="'/AddToPath:1'"
+    env | grep PATH
+    refreshenv
     python --help
   elif [[ $TRAVIS_OS_NAME == 'linux' ]]
   then
