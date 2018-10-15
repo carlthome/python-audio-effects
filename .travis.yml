@@ -8,11 +8,11 @@ os:
 before_install: |
   if [[ $TRAVIS_OS_NAME == 'windows' ]]
   then
-    powershell
     choco install python
+    choco install ffmpeg sox.portable
+    powershell
     refreshenv
     python -m ensurepip
-    choco install ffmpeg sox.portable
   elif [[ $TRAVIS_OS_NAME == 'linux' ]]
   then
     sudo apt-get install -y ffmpeg sox
