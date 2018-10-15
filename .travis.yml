@@ -8,7 +8,7 @@ os:
 before_install: |
   if [[ $TRAVIS_OS_NAME == 'windows' ]]
   then
-    choco install miniconda3 /JustMe /AddToPath
+    choco install miniconda3 --params="'/AddToPath:1'"
     python --help
   elif [[ $TRAVIS_OS_NAME == 'linux' ]]
   then
@@ -18,7 +18,7 @@ before_install: |
     brew install ffmpeg sox
     export PATH=$PATH:/Users/travis/Library/Python/2.7/bin
   fi
-install: pip install --user . 
+install: pip install --user -e .[test
 before_script: pip install --user pytest pytest-cov pytest-flake8 librosa
 script: pytest --flake8 --cov=pysndfx tests/
 deploy:
