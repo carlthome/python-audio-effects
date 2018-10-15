@@ -1,9 +1,6 @@
 sudo: true
 dist: xenial
-language: python
-python:
-- 3.6
-- 2.7
+language: sh
 os:
 - linux
 - windows
@@ -11,6 +8,7 @@ os:
 before_install: |
   if [[ $TRAVIS_OS_NAME == 'windows' ]]
   then
+    choco install python
     choco install ffmpeg sox.portable
   elif [[ $TRAVIS_OS_NAME == 'linux' ]]
   then
@@ -19,8 +17,8 @@ before_install: |
   then
     brew install ffmpeg sox
   fi
-install: pip install -e .
-before_script: pip install pytest pytest-cov pytest-flake8 librosa
+install: pip install --user -e .
+before_script: pip install --user pytest pytest-cov pytest-flake8 librosa
 script: pytest --flake8 --cov=pysndfx tests/
 deploy:
   provider: pypi
