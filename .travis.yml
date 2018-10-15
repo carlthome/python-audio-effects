@@ -9,7 +9,7 @@ before_install: |
   if [[ $TRAVIS_OS_NAME == 'windows' ]]
   then
     choco install python
-    powershell /c "python --help"
+    powershell "python --help"
     python -m ensurepip
     choco install ffmpeg sox.portable
   elif [[ $TRAVIS_OS_NAME == 'linux' ]]
