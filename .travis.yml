@@ -17,11 +17,10 @@ before_install:
   fi
 install: pip install . --user
 before_script:
-- pip install --user pytest coverage librosa
+- pip install --user pytest pytest-cov pytest-flake8 librosa
 - hash -r
 script:
-- coverage run -m pytest
-- coverage report
+- pytest --flake8 --cov=pysndfx tests/
 deploy:
   provider: pypi
   user: carlthome
