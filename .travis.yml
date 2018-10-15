@@ -18,7 +18,7 @@ before_install:
     sudo apt-get install -y ffmpeg sox;
   elif [[ $TRAVIS_OS_NAME == 'osx' ]]; then
     brew install sox;
-    export PATH=PATH:/Users/travis/Library/Python/2.7/bin;
+    export PATH=$PATH:/Users/travis/Library/Python/2.7/bin;
   fi
 install: pip install . --user
 before_script:
