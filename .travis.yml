@@ -5,22 +5,22 @@ os:
 - linux
 - windows
 - osx
-before_install:
-- if [[ $TRAVIS_OS_NAME == 'windows' ]]; then
-    choco install ffmpeg sox.portable;
-    choco install python pip;
-  elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
-    sudo apt-get install -y ffmpeg sox;
-  elif [[ $TRAVIS_OS_NAME == 'osx' ]]; then
-    brew install ffmpeg sox;
-    export PATH=$PATH:/Users/travis/Library/Python/2.7/bin;
+before_install: |
+  if [[ $TRAVIS_OS_NAME == 'windows' ]]
+  then
+    choco install ffmpeg sox.portable
+    choco install python pip
+  elif [[ $TRAVIS_OS_NAME == 'linux' ]]
+  then
+    sudo apt-get install -y ffmpeg sox
+  elif [[ $TRAVIS_OS_NAME == 'osx' ]]
+  then
+    brew install ffmpeg sox
+    export PATH=$PATH:/Users/travis/Library/Python/2.7/bin
   fi
-install: pip install . --user
-before_script:
-- pip install --user pytest pytest-cov pytest-flake8 librosa
-- hash -r
-script:
-- pytest --flake8 --cov=pysndfx tests/
+install: pip install --user . 
+before_script: pip install --user pytest pytest-cov pytest-flake8 librosa
+script: pytest --flake8 --cov=pysndfx tests/
 deploy:
   provider: pypi
   user: carlthome
