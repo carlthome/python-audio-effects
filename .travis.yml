@@ -1,6 +1,9 @@
 sudo: true
 dist: xenial
 language: python
+python:
+- 3.6
+- 2.7
 os:
 - linux
 - windows
