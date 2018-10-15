@@ -7,17 +7,12 @@ os:
 - osx
 before_install:
 - if [[ $TRAVIS_OS_NAME == 'windows' ]]; then
-    choco install sox.portable;
-    choco install python;
-    refreshenv;
-    hash -r;
-    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py;
-    alias python=C:\Python37\bin\python.exe;
-    python get-pip.py;
+    choco install ffmpeg sox.portable;
+    choco install python pip;
   elif [[ $TRAVIS_OS_NAME == 'linux' ]]; then
     sudo apt-get install -y ffmpeg sox;
   elif [[ $TRAVIS_OS_NAME == 'osx' ]]; then
-    brew install sox;
+    brew install ffmpeg sox;
     export PATH=$PATH:/Users/travis/Library/Python/2.7/bin;
   fi
 install: pip install . --user
