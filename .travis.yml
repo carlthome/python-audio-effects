@@ -18,7 +18,7 @@ before_install: |
     brew install ffmpeg sox
     export PATH=$PATH:/Users/travis/Library/Python/2.7/bin
   fi
-install: pip install --user -e .[test
+install: pip install --user -e .
 before_script: pip install --user pytest pytest-cov pytest-flake8 librosa
 script: pytest --flake8 --cov=pysndfx tests/
 deploy:
