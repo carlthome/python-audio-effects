@@ -16,6 +16,7 @@ before_install: |
   elif [[ $TRAVIS_OS_NAME == 'osx' ]]
   then
     brew install ffmpeg sox
+    export PATH=$PATH:/Users/travis/Library/Python/2.7/bin
   fi
 install: pip install --user -e .[test]
 before_script: pip install --user pytest pytest-cov pytest-flake8
