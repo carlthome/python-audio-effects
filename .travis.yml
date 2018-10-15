@@ -9,10 +9,7 @@ before_install: |
   if [[ $TRAVIS_OS_NAME == 'windows' ]]
   then
     choco install ffmpeg sox.portable
-    choco install python
-    export PATH=$PATH:C:\Python37\bin
-    wget https://bootstrap.pypa.io/get-pip.py
-    python get-pip.py
+    python --help
   elif [[ $TRAVIS_OS_NAME == 'linux' ]]
   then
     sudo apt-get install -y ffmpeg sox
