@@ -19,6 +19,7 @@ class AudioEffectsChain:
         self.command = []
 
     def equalizer(self, frequency, q=1.0, db=-3.0):
+        '''equalizer takes 3 parameters: filter center frequency in Hz, "q" or band-width (default=1.0), and a signed number for gain or attenuation in dB. Beware of clipping when using positive gain.'''
         self.command.append('equalizer')
         self.command.append(frequency)
         self.command.append(str(q) + 'q')
@@ -26,18 +27,21 @@ class AudioEffectsChain:
         return self
 
     def bandpass(self, frequency, q=1.0):
+        '''bandpass gradually removes frequencies outside the band specified. It takes 2 parameters: filter center frequency in Hz and "q" or band-width (default=1.0).'''
         self.command.append('bandpass')
         self.command.append(frequency)
         self.command.append(str(q) + 'q')
         return self
 
     def bandreject(self, frequency, q=1.0):
+        '''bandreject gradually removes frequencies within the band specified. It takes 2 parameters: filter center frequency in Hz and "q" or band-width (default=1.0).'''
         self.command.append('bandreject')
         self.command.append(frequency)
         self.command.append(str(q) + 'q')
         return self
 
     def lowshelf(self, gain=-20.0, frequency=100, slope=0.5):
+        '''lowshelf takes 3 parameters: a signed number for gain or attenuation in dB, filter frequency in Hz and slope (default=0.5, maximum=1.0). Beware of Clipping when using positive gain.'''
         self.command.append('bass')
         self.command.append(gain)
         self.command.append(frequency)
@@ -45,6 +49,7 @@ class AudioEffectsChain:
         return self
 
     def highshelf(self, gain=-20.0, frequency=3000, slope=0.5):
+        '''highshelf takes 3 parameters: a signed number for gain or attenuation in dB, filter frequency in Hz and slope (default=0.5). Beware of clipping when using positive gain.'''
         self.command.append('treble')
         self.command.append(gain)
         self.command.append(frequency)
@@ -52,29 +57,42 @@ class AudioEffectsChain:
         return self
 
     def highpass(self, frequency, q=0.707):
+        '''highpass takes 2 parameters: filter frequency in Hz below which frequencies will be attenuated and q (default=0.707). Beware of clipping when using high q values.'''
         self.command.append('highpass')
         self.command.append(frequency)
         self.command.append(str(q) + 'q')
         return self
 
     def lowpass(self, frequency, q=0.707):
+        '''lowpass takes 2 parameters: filter frequency in Hz above which frequencies will be attenuated and q (default=0.707). Beware of clipping when using high q values.'''
         self.command.append('lowpass')
         self.command.append(frequency)
         self.command.append(str(q) + 'q')
         return self
 
     def limiter(self, gain=3.0):
+        '''limiter tries to raise signal level without clipping. Takes one parameter, gain in dB. Beware of adding too much gain, as it can cause audible distortion. See the compand effect for a more capable limiter.'''
         self.command.append('gain')
         self.command.append('-l')
         self.command.append(gain)
         return self
 
     def normalize(self):
+        '''normalize boosts level so that the loudest part of your file reaches maximum, without clipping. It has no parameters.'''
         self.command.append('gain')
         self.command.append('-n')
         return self
 
     def compand(self, attack=0.2, decay=1, soft_knee=2.0, threshold=-20, db_from=-20.0, db_to=-20.0):
+      '''
+      compand manipulates dynamic range of the input file. It takes 6 parameters: 
+      attack (in seconds), 
+      decay (seconds), 
+      soft_knee (ex. 6 results in 6:1 compression ratio), 
+      threshold (a negative value in dB), 
+      the level below which the signal will NOT be companded (a negative value in dB), 
+      the level above which the signal will NOT be companded (a negative value in dB), 
+      '''
         self.command.append('compand')
         self.command.append(str(attack) + ',' + str(decay))
         self.command.append(str(soft_knee) + ':' + str(threshold) + ',' + str(db_from) + ',' + str(db_to))
