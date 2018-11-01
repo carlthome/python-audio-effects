@@ -84,15 +84,15 @@ class AudioEffectsChain:
         return self
 
     def compand(self, attack=0.2, decay=1, soft_knee=2.0, threshold=-20, db_from=-20.0, db_to=-20.0):
-      '''
-      compand manipulates dynamic range of the input file. It takes 6 parameters: 
-      attack (in seconds), 
-      decay (seconds), 
-      soft_knee (ex. 6 results in 6:1 compression ratio), 
-      threshold (a negative value in dB), 
-      the level below which the signal will NOT be companded (a negative value in dB), 
-      the level above which the signal will NOT be companded (a negative value in dB), 
-      '''
+        '''
+        compand manipulates dynamic range of the input file. It takes 6 parameters: 
+        attack (in seconds), 
+        decay (seconds), 
+        soft_knee (ex. 6 results in 6:1 compression ratio), 
+        threshold (a negative value in dB), 
+        the level below which the signal will NOT be companded (a negative value in dB), 
+        the level above which the signal will NOT be companded (a negative value in dB), 
+        '''
         self.command.append('compand')
         self.command.append(str(attack) + ',' + str(decay))
         self.command.append(str(soft_knee) + ':' + str(threshold) + ',' + str(db_from) + ',' + str(db_to))
@@ -111,6 +111,7 @@ class AudioEffectsChain:
              M=None,
              I=None,
              L=None):
+
         self.command.append("sinc")
         if not mutually_exclusive(attenuation, beta):
             raise ValueError("Attenuation (-a) and beta (-b) are mutually exclusive arguments")
