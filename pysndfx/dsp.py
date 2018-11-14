@@ -74,10 +74,18 @@ class AudioEffectsChain:
         self.command.append('-n')
         return self
 
-    def compand(self, attack=0.2, decay=1, soft_knee=2.0, threshold=-20, db_from=-20.0, db_to=-20.0):
+    def compand(self,
+                attack=0.2,
+                decay=1,
+                soft_knee=2.0,
+                threshold=-20,
+                db_from=-20.0,
+                db_to=-20.0):
         self.command.append('compand')
         self.command.append(str(attack) + ',' + str(decay))
-        self.command.append(str(soft_knee) + ':' + str(threshold) + ',' + str(db_from) + ',' + str(db_to))
+        self.command.append(
+            str(soft_knee) + ':' + str(threshold) + ',' + str(db_from) + ',' +
+            str(db_to))
         return self
 
     def sinc(self,
@@ -95,7 +103,9 @@ class AudioEffectsChain:
              L=None):
         self.command.append("sinc")
         if not mutually_exclusive(attenuation, beta):
-            raise ValueError("Attenuation (-a) and beta (-b) are mutually exclusive arguments")
+            raise ValueError(
+                "Attenuation (-a) and beta (-b) are mutually exclusive arguments"
+            )
         if attenuation is not None and beta is None:
             self.command.append("-a")
             self.command.append(str(attenuation))
@@ -104,7 +114,8 @@ class AudioEffectsChain:
             self.command.append(str(beta))
 
         if not mutually_exclusive(phase, M, I, L):
-            raise ValueError("Phase (-p), -M, L, and -I are mutually exclusive arguments")
+            raise ValueError(
+                "Phase (-p), -M, L, and -I are mutually exclusive arguments")
         if phase is not None:
             self.command.append("-p")
             self.command.append(str(phase))
@@ -116,7 +127,8 @@ class AudioEffectsChain:
             self.command.append("-L")
 
         if not mutually_exclusive(left_t, left_t):
-            raise ValueError("Transition bands options (-t or -n) are mutually exclusive")
+            raise ValueError(
+                "Transition bands options (-t or -n) are mutually exclusive")
         if left_t is not None:
             self.command.append("-t")
             self.command.append(str(left_t))
@@ -127,12 +139,14 @@ class AudioEffectsChain:
         if high_pass_frequency is not None and low_pass_frequency is None:
             self.command.append(str(high_pass_frequency))
         elif high_pass_frequency is not None and low_pass_frequency is not None:
-            self.command.append(str(high_pass_frequency) + "-" + str(low_pass_frequency))
+            self.command.append(
+                str(high_pass_frequency) + "-" + str(low_pass_frequency))
         elif high_pass_frequency is None and low_pass_frequency is not None:
             self.command.append(str(low_pass_frequency))
 
         if not mutually_exclusive(right_t, right_t):
-            raise ValueError("Transition bands options (-t or -n) are mutually exclusive")
+            raise ValueError(
+                "Transition bands options (-t or -n) are mutually exclusive")
         if right_t is not None:
             self.command.append("-t")
             self.command.append(str(right_t))
@@ -158,7 +172,8 @@ class AudioEffectsChain:
         for decay in decays:
             modulation = decay.pop()
             numerical = decay
-            self.command.append(" ".join(map(str, numerical)) + " -" + modulation)
+            self.command.append(" ".join(map(str, numerical)) + " -" +
+                                modulation)
         return self
 
     def delay(self,
@@ -235,7 +250,8 @@ class AudioEffectsChain:
             self.command.append('-s')
         return self
 
-    def pitch(self, shift,
+    def pitch(self,
+              shift,
               use_tree=False,
               segment=82,
               search=14.68,
@@ -353,14 +369,15 @@ class AudioEffectsChain:
         self.command.append(command)
         return self
 
-    def __call__(self,
-                 src,
-                 dst=np.ndarray,
-                 sample_in=44100, # used only for arrays
-                 sample_out=None,
-                 encoding_out=None,
-                 channels_out=None,
-                 allow_clipping=True):
+    def __call__(
+            self,
+            src,
+            dst=np.ndarray,
+            sample_in=44100,  # used only for arrays
+            sample_out=None,
+            encoding_out=None,
+            channels_out=None,
+            allow_clipping=True):
 
         # depending on the input, using the right object to set up the input data arguments
         stdin = None
@@ -372,7 +389,7 @@ class AudioEffectsChain:
             stdin = src
         elif isinstance(src, BufferedReader):
             infile = FileBufferInput(src)
-            stdin = infile.data # retrieving the data from the file reader (np array)
+            stdin = infile.data  # retrieving the data from the file reader (np array)
         else:
             infile = None
 
@@ -380,12 +397,12 @@ class AudioEffectsChain:
         if encoding_out is None and dst is np.ndarray:
             if isinstance(stdin, np.ndarray):
                 encoding_out = stdin.dtype.type
-            elif isinstance(stdin,  str):
+            elif isinstance(stdin, str):
                 encoding_out = np.float32
         # finding out which channel count to use (defaults to the input file's channel count)
         if channels_out is None:
             channels_out = infile.channels
-        if sample_out is None: #if the output samplerate isn't specified, default to input's
+        if sample_out is None:  #if the output samplerate isn't specified, default to input's
             sample_out = sample_in
 
         # same as for the input data, but for the destination
@@ -410,7 +427,9 @@ class AudioEffectsChain:
 
         logger.debug("Running command : %s" % cmd)
         if isinstance(stdin, np.ndarray):
-            stdout, stderr = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(stdin.tobytes(order="F"))
+            stdout, stderr = Popen(
+                cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE).communicate(
+                    stdin.tobytes(order="F"))
         else:
             stdout, stderr = Popen(cmd, stdout=PIPE, stderr=PIPE).communicate()
 
@@ -419,8 +438,9 @@ class AudioEffectsChain:
         elif stdout:
             outsound = np.fromstring(stdout, dtype=encoding_out)
             if channels_out > 1:
-                outsound = outsound.reshape((channels_out, int(len(outsound) / channels_out)),
-                                            order='F')
+                outsound = outsound.reshape(
+                    (channels_out, int(len(outsound) / channels_out)),
+                    order='F')
             if isinstance(outfile, FileBufferOutput):
                 outfile.write(outsound)
             return outsound
