@@ -11,13 +11,9 @@ addons:
     packages:
     - ffmpeg
     - sox
-before_install: pip install cython # TODO This shouldn't be needed.
 install: pip install .
-before_script:
-- pip install joblib==0.11  # TODO Remove this line when librosa 0.6.2 is released (see https://github.com/librosa/librosa/issues/732#issuecomment-400669539)
-- pip install pytest-cov librosa
-script:
-- pytest --cov=pysndfx
+before_script: pip install pytest-cov librosa
+script: pytest --cov=pysndfx
 deploy:
   provider: pypi
   user: carlthome
