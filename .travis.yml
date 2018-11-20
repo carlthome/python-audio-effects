@@ -12,7 +12,9 @@ addons:
     - ffmpeg
     - sox
 install: pip install .[test]
-before_script: pip install pytest coverage flake8 flake8-bugbear flake8-isort
+before_script:
+- pip install pytest coverage flake8 flake8-isort
+- if [[ $TRAVIS_PYTHON_VERSION != '2.7' ]]; then pip install flake8-bugbear; fi;
 script:
 - flake8 --disable-noqa
 - coverage run -m pytest
