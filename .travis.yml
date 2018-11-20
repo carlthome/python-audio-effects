@@ -2,18 +2,21 @@ sudo: true
 dist: xenial
 language: python
 python:
-- 3.7
-- 3.6
-- 2.7
+- '3.7'
+- '3.6'
+- '2.7'
 cache: pip
 addons:
   apt:
     packages:
     - ffmpeg
     - sox
-install: pip install .
-before_script: pip install pytest-cov librosa
-script: pytest --cov=pysndfx
+install: pip install .[test]
+before_script: pip install pytest coverage flake8 flake8-bugbear flake8-isort
+script:
+- flake8 --disable-noqa
+- coverage run -m pytest
+- coverage report
 deploy:
   provider: pypi
   user: carlthome

@@ -1,18 +1,20 @@
 # coding=utf-8
 """Testing module for the DSP package, preferably run with py.test."""
-import librosa as lr
 import logging
+
+import librosa as lr
 from pysndfx.dsp import AudioEffectsChain
 
-logger = logging.getLogger("pysndfx")
+logger = logging.getLogger('pysndfx')
 logger.setLevel(logging.DEBUG)
 
-apply_audio_effects = AudioEffectsChain()\
-    .highshelf()\
-    .reverb()\
-    .phaser()\
-    .delay()\
-    .lowshelf()
+apply_audio_effects = \
+    (AudioEffectsChain()
+     .highshelf()
+     .reverb()
+     .phaser()
+     .delay()
+     .lowshelf())
 
 infile = lr.util.example_audio_file()
 mono, sr = lr.load(infile, sr=None)

@@ -1,5 +1,4 @@
 # coding=utf-8
-"""Install config."""
 from setuptools import setup
 
 with open('README.md') as f:
@@ -27,4 +26,6 @@ setup(
     ],
     keywords='audio music sound',
     packages=['pysndfx'],
-    install_requires=['numpy'])
+    install_requires=['numpy'],
+    extras_require={'test': ['librosa']},
+)
