@@ -19,7 +19,12 @@ class AudioEffectsChain:
         self.command = []
 
     def equalizer(self, frequency, q=1.0, db=-3.0):
-        '''equalizer takes three parameters: filter center frequency in Hz, "q" or band-width (default=1.0), and a signed number for gain or attenuation in dB. Beware of clipping when using positive gain.'''
+        """equalizer takes three parameters: filter center frequency in Hz, "q"
+        or band-width (default=1.0), and a signed number for gain or
+        attenuation in dB.
+
+        Beware of clipping when using positive gain.
+        """
         self.command.append('equalizer')
         self.command.append(frequency)
         self.command.append(str(q) + 'q')
@@ -27,21 +32,33 @@ class AudioEffectsChain:
         return self
 
     def bandpass(self, frequency, q=1.0):
-        '''bandpass takes 2 parameters: filter center frequency in Hz and "q" or band-width (default=1.0). It gradually removes frequencies outside the band specified.'''
+        """bandpass takes 2 parameters: filter center frequency in Hz and "q"
+        or band-width (default=1.0).
+
+        It gradually removes frequencies outside the band specified.
+        """
         self.command.append('bandpass')
         self.command.append(frequency)
         self.command.append(str(q) + 'q')
         return self
 
     def bandreject(self, frequency, q=1.0):
-        '''bandreject takes 2 parameters: filter center frequency in Hz and "q" or band-width (default=1.0). It gradually removes frequencies within the band specified.'''
+        """bandreject takes 2 parameters: filter center frequency in Hz and "q"
+        or band-width (default=1.0).
+
+        It gradually removes frequencies within the band specified.
+        """
         self.command.append('bandreject')
         self.command.append(frequency)
         self.command.append(str(q) + 'q')
         return self
 
     def lowshelf(self, gain=-20.0, frequency=100, slope=0.5):
-        '''lowshelf takes 3 parameters: a signed number for gain or attenuation in dB, filter frequency in Hz and slope (default=0.5, maximum=1.0). Beware of Clipping when using positive gain.'''
+        """lowshelf takes 3 parameters: a signed number for gain or attenuation
+        in dB, filter frequency in Hz and slope (default=0.5, maximum=1.0).
+
+        Beware of Clipping when using positive gain.
+        """
         self.command.append('bass')
         self.command.append(gain)
         self.command.append(frequency)
@@ -49,7 +66,11 @@ class AudioEffectsChain:
         return self
 
     def highshelf(self, gain=-20.0, frequency=3000, slope=0.5):
-        '''highshelf takes 3 parameters: a signed number for gain or attenuation in dB, filter frequency in Hz and slope (default=0.5). Beware of clipping when using positive gain.'''
+        """highshelf takes 3 parameters: a signed number for gain or
+        attenuation in dB, filter frequency in Hz and slope (default=0.5).
+
+        Beware of clipping when using positive gain.
+        """
         self.command.append('treble')
         self.command.append(gain)
         self.command.append(frequency)
@@ -57,43 +78,58 @@ class AudioEffectsChain:
         return self
 
     def highpass(self, frequency, q=0.707):
-        '''highpass takes 2 parameters: filter frequency in Hz below which frequencies will be attenuated and q (default=0.707). Beware of clipping when using high q values.'''
+        """highpass takes 2 parameters: filter frequency in Hz below which
+        frequencies will be attenuated and q (default=0.707).
+
+        Beware of clipping when using high q values.
+        """
         self.command.append('highpass')
         self.command.append(frequency)
         self.command.append(str(q) + 'q')
         return self
 
     def lowpass(self, frequency, q=0.707):
-        '''lowpass takes 2 parameters: filter frequency in Hz above which frequencies will be attenuated and q (default=0.707). Beware of clipping when using high q values.'''
+        """lowpass takes 2 parameters: filter frequency in Hz above which
+        frequencies will be attenuated and q (default=0.707).
+
+        Beware of clipping when using high q values.
+        """
         self.command.append('lowpass')
         self.command.append(frequency)
         self.command.append(str(q) + 'q')
         return self
 
     def limiter(self, gain=3.0):
-        '''limiter takes one parameter: gain in dB. Beware of adding too much gain, as it can cause audible distortion. See the compand effect for a more capable limiter.'''
+        """limiter takes one parameter: gain in dB.
+
+        Beware of adding too much gain, as it can cause audible
+        distortion. See the compand effect for a more capable limiter.
+        """
         self.command.append('gain')
         self.command.append('-l')
         self.command.append(gain)
         return self
 
     def normalize(self):
-        '''normalize has no parameters. It boosts level so that the loudest part of your file reaches maximum, without clipping.'''
+        """normalize has no parameters.
+
+        It boosts level so that the loudest part of your file reaches
+        maximum, without clipping.
+        """
         self.command.append('gain')
         self.command.append('-n')
         return self
 
     def compand(self, attack=0.2, decay=1, soft_knee=2.0, threshold=-20, db_from=-20.0, db_to=-20.0):
-        '''
-        compand It takes 6 parameters: 
-        attack (seconds), 
-        decay (seconds), 
-        soft_knee (ex. 6 results in 6:1 compression ratio), 
-        threshold (a negative value in dB), 
-        the level below which the signal will NOT be companded (a negative value in dB), 
-        the level above which the signal will NOT be companded (a negative value in dB). 
-        This effect manipulates dynamic range of the input file. 
-        '''
+        """compand takes 6 parameters: 
+        
+        attack (seconds), decay (seconds), soft_knee (ex. 6 results 
+        in 6:1 compression ratio), threshold (a negative value
+        in dB), the level below which the signal will NOT be companded
+        (a negative value in dB), the level above which the signal will
+        NOT be companded (a negative value in dB). This effect
+        manipulates dynamic range of the input file.
+        """
         self.command.append('compand')
         self.command.append(str(attack) + ',' + str(decay))
         self.command.append(str(soft_knee) + ':' + str(threshold) + ',' + str(db_from) + ',' + str(db_to))
@@ -112,25 +148,26 @@ class AudioEffectsChain:
              M=None,
              I=None,
              L=None):
-        '''
-        sinc takes 12 parameters:
-          high_pass_frequency in Hz,
-          low_pass_frequency in Hz,
-          left_t,
-          left_n,
-          right_t,
-          right_n,
-          attenuation in dB,
-          beta,
-          phase,
-          M,
-          I,
-          L
-        This effect creates a steep bandpass or bandreject filter. 
-        You may specify as few as the first two parameters. 
-        Setting the high-pass parameter to a lower value than the 
-        low-pass creates a band-reject filter. 
-        '''
+        """sinc takes 12 parameters:
+
+        high_pass_frequency in Hz,
+        low_pass_frequency in Hz,
+        left_t,
+        left_n,
+        right_t,
+        right_n,
+        attenuation in dB,
+        beta,
+        phase,
+        M,
+        I,
+        L 
+        
+        This effect creates a steep bandpass or
+        bandreject filter. You may specify as few as the first two
+        parameters. Setting the high-pass parameter to a lower value
+        than the low-pass creates a band-reject filter.
+        """
         self.command.append("sinc")
         if not mutually_exclusive(attenuation, beta):
             raise ValueError("Attenuation (-a) and beta (-b) are mutually exclusive arguments")
@@ -207,7 +244,12 @@ class AudioEffectsChain:
               delays=list((1000, 1800)),
               decays=list((0.3, 0.25)),
               parallel=False):
-        '''delay takes 4 parameters: input gain (max 1), output gain and then two lists, delays and decays. Each list is a pair of comma seperated values within parenthesis. '''
+        """delay takes 4 parameters: input gain (max 1), output gain 
+        and then two lists, delays and decays.
+
+        Each list is a pair of comma seperated values within
+        parenthesis.
+        """
         self.command.append('echo' + ('s' if parallel else ''))
         self.command.append(gain_in)
         self.command.append(gain_out)
@@ -234,7 +276,7 @@ class AudioEffectsChain:
         return self
 
     def gain(self, db):
-        '''gain takes one paramter: gain in dB'''
+        """gain takes one paramter: gain in dB."""
         self.command.append('gain')
         self.command.append(db)
         return self
@@ -253,7 +295,11 @@ class AudioEffectsChain:
         return self
 
     def overdrive(self, gain=20, colour=20):
-        '''overdrive takes 2 parameters: gain in dB and colour which effects the character of the distortion effet. Both have a default value of 20. TODO - changing color does not seem to have an audible effect'''
+        """overdrive takes 2 parameters: gain in dB and colour which effects
+        the character of the distortion effet.
+
+        Both have a default value of 20. TODO - changing color does not seem to have an audible effect
+        """
         self.command.append('overdrive')
         self.command.append(gain)
         self.command.append(colour)
@@ -266,7 +312,9 @@ class AudioEffectsChain:
                decay=0.25,
                speed=2,
                triangular=False):
-        '''phaser takes 6 parameters: input gain (max 1.0), output gain (max 1.0), delay, decay, speed and LFO shape=trianglar (which must be set to True or False'''
+        """phaser takes 6 parameters: input gain (max 1.0), output gain (max
+        1.0), delay, decay, speed and LFO shape=trianglar (which must be set to
+        True or False)"""
         self.command.append('phaser')
         self.command.append(gain_in)
         self.command.append(gain_out)
@@ -284,7 +332,8 @@ class AudioEffectsChain:
               segment=82,
               search=14.68,
               overlap=12):
-        '''pitch takes 4 parameters: user_tree (True or False), segment, search and overlap'''
+        """pitch takes 4 parameters: user_tree (True or False), segment, search
+        and overlap."""
         self.command.append("pitch")
         if use_tree:
             self.command.append("-q")
@@ -295,7 +344,7 @@ class AudioEffectsChain:
         return self
 
     def loop(self):
-        '''TODO Needs doc string'''
+        """TODO Needs doc string."""
         self.command.append('repeat')
         self.command.append('-')
         return self
@@ -308,7 +357,9 @@ class AudioEffectsChain:
                pre_delay=20,
                wet_gain=0,
                wet_only=False):
-        '''reverb takes 7 parameters: reverberance, high-freqnency damping, room scale, stereo depth, pre-delay, wet gain and wet only (Truce or False)'''
+        """reverb takes 7 parameters: reverberance, high-freqnency damping,
+        room scale, stereo depth, pre-delay, wet gain and wet only (Truce or
+        False)"""
         self.command.append('reverb')
         if wet_only:
             self.command.append('-w')
@@ -321,12 +372,18 @@ class AudioEffectsChain:
         return self
 
     def reverse(self):
-        '''reverse takes no parameters. It plays the input sound backwards.'''
+        """reverse takes no parameters.
+
+        It plays the input sound backwards.
+        """
         self.command.append("reverse")
         return self
 
     def speed(self, factor, use_semitones=False):
-        '''speed takes 2 parameters: factor and use-semitones (True or False). When use-semitones = False, a factor of 2 doubles the speed and raises the pitch an octave. The same result is achieved with factor = 1200 and use semitones = True.'''
+        """speed takes 2 parameters: factor and use-semitones (True or False).
+
+        When use-semitones = False, a factor of 2 doubles the speed and raises the pitch an octave. The same result is achieved with factor = 1200 and use semitones = True.
+        """
         self.command.append("speed")
         self.command.append(factor if not use_semitones else str(factor) + "c")
         return self
@@ -342,7 +399,12 @@ class AudioEffectsChain:
               segment=82,
               search=14.68,
               overlap=12):
-        '''tempo takes 6 parameters: factor, use tree (True or False), option flag, segment, search and overlap). This effect changes the duration of the sound without modifying pitch.'''
+        """tempo takes 6 parameters: factor, use tree (True or False), option
+        flag, segment, search and overlap).
+
+        This effect changes the duration of the sound without modifying
+        pitch.
+        """
         self.command.append("tempo")
         if use_tree:
             self.command.append("-q")
@@ -355,7 +417,7 @@ class AudioEffectsChain:
         return self
 
     def tremolo(self, freq, depth=40):
-        '''tremolo takes two parameters: frequency and depth (max 100)'''
+        """tremolo takes two parameters: frequency and depth (max 100)"""
         self.command.append("tremolo")
         self.command.append(freq)
         self.command.append(depth)
@@ -363,7 +425,7 @@ class AudioEffectsChain:
 
 
     def trim(self, positions):
-        '''TODO Needs doc string'''
+        """TODO Needs doc string."""
         self.command.append("trim")
         for position in positions:
             # TODO: check if the position means something
@@ -371,7 +433,7 @@ class AudioEffectsChain:
         return self
 
     def upsample(self, factor):
-        '''TODO Needs doc string'''
+        """TODO Needs doc string."""
         self.command.append("upsample")
         self.command.append(factor)
         return self
@@ -381,7 +443,8 @@ class AudioEffectsChain:
         return self
 
     def vol(self, gain, type="amplitude", limiter_gain=None):
-        '''vol takes three parameters: gain, gain-type (amplitude, power or dB) and limiter gain. '''
+        """vol takes three parameters: gain, gain-type (amplitude, power or dB)
+        and limiter gain."""
         self.command.append("vol")
         if type in ["amplitude", "power", "dB"]:
             self.command.append(type)
@@ -403,7 +466,6 @@ class AudioEffectsChain:
             - http://sox.sourceforge.net/sox.html
             - http://tldp.org/LDP/LG/issue73/chung.html
             - http://dsl.org/cookbook/cookbook_29.html
-
         """
         self.command.append(command)
         return self
