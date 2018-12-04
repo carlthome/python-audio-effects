@@ -2,22 +2,23 @@ sudo: true
 dist: xenial
 language: python
 python:
-- 3.7
-- 3.6
-- 2.7
+- '3.7'
+- '3.6'
+- '2.7'
 cache: pip
 addons:
   apt:
     packages:
     - ffmpeg
     - sox
-before_install: pip install cython # TODO This shouldn't be needed.
-install: pip install .
+install: pip install .[test]
 before_script:
-- pip install joblib==0.11  # TODO Remove this line when librosa 0.6.2 is released (see https://github.com/librosa/librosa/issues/732#issuecomment-400669539)
-- pip install pytest-cov librosa
+- pip install pytest coverage flake8 flake8-isort
+- if [[ $TRAVIS_PYTHON_VERSION != '2.7' ]]; then pip install flake8-bugbear; fi;
 script:
-- pytest --cov=pysndfx
+- flake8 --disable-noqa
+- coverage run -m pytest
+- coverage report
 deploy:
   provider: pypi
   user: carlthome
