@@ -6,6 +6,8 @@ from subprocess import PIPE, Popen
 
 import numpy as np
 
+from .converter import SOX_CONVERTER
+
 from .sndfiles import (
     FileBufferInput,
     FileBufferOutput,
@@ -517,7 +519,7 @@ class AudioEffectsChain:
 
         cmd = shlex.split(
             ' '.join([
-                'sox',
+                str(SOX_CONVERTER()),
                 '-N',
                 '-V1' if allow_clipping else '-V2',
                 infile.cmd_prefix if infile is not None else '-d',

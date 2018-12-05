@@ -2,7 +2,7 @@ import logging
 import shlex
 import wave
 from subprocess import PIPE, Popen
-
+from .converter import SOX_CONVERTER
 import numpy as np
 
 ENCODINGS_MAPPING = {
@@ -12,7 +12,6 @@ ENCODINGS_MAPPING = {
 }
 
 PIPE_CHAR = '-'
-
 logger = logging.getLogger('pysndfx')
 
 
@@ -26,7 +25,7 @@ class SoxInput(object):
 class FilePathInput(SoxInput):
     def __init__(self, filepath):
         super(FilePathInput, self).__init__()
-        info_cmd = 'sox --i -c ' + filepath
+        info_cmd = '{converter} --i -c {path}'.format(converter=SOX_CONVERTER(), path=filepath)
         logger.debug("Running info command : %s" % info_cmd)
         stdout, stderr = Popen(shlex.split(info_cmd, posix=False), stdout=PIPE, stderr=PIPE).communicate()
         self.channels = int(stdout)
