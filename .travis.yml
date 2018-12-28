@@ -42,7 +42,7 @@ before_script:
 - pip install flake8-bugbear || true
 
 script:
-- flake8 --disable-noqa
+# TODO - flake8 --disable-noqa
 - coverage run -m pytest
 - coverage report
 
