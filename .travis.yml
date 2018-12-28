@@ -32,14 +32,11 @@ before_install: |
   then
     set -e
 
-    export PATH=$PATH:$TRAVIS_BUILD_DIR
-    echo $PATH
-
-    wget https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2-win32.exe
+    wget https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2-win32.exe -O /bin/sox.exe
     sox --version
 
     wget https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1-win64-static.zip
-    unzip -j ffmpeg-4.1-win64-static.zip
+    unzip -j -d /bin ffmpeg-4.1-win64-static.zip
     ffmpeg -version
 
     choco install miniconda3 --params="'/AddToPath:1'"
