@@ -32,12 +32,12 @@ before_install: |
   then
     set -e
 
-    wget https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2-win32.exe -O /bin/sox.exe
-    sox --version
+    wget https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2-win32.exe -O bin/sox.exe
+    bin/sox.exe --version
 
-    wget https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1-win64-static.zip
-    unzip -j -d /bin ffmpeg-4.1-win64-static.zip
-    ffmpeg -version
+    wget https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1-win64-static.zip -O ffmpeg.zip
+    unzip -jd bin ffmpeg.zip
+    bin/ffmpeg.exe -version
 
     choco install miniconda3 --params="'/AddToPath:1'"
     export PATH="/c/tools/miniconda3/scripts:/c/tools/miniconda3/:$PATH"
