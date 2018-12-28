@@ -26,19 +26,13 @@ addons:
     - python
     - ffmpeg
     - sox
-  chocolatey:
-    packages:
-    - python
-    - ffmpeg
-    - sox.portable
 
 before_install: |
   if [ $TRAVIS_OS_NAME == 'windows' ]
   then
-    choco install python
-    alias python=C:\Python37\python.exe
+    choco install python ffmpeg sox.portable
+    export PATH="C:\Python37":$PATH
     python -m ensurepip
-    alias pip=C:\Python37\pip.exe
   fi
 
 install:
