@@ -30,9 +30,13 @@ addons:
 before_install: |
   if [ $TRAVIS_OS_NAME == 'windows' ]
   then
-    choco install python ffmpeg sox.portable
-    export PATH="C:\Python37":$PATH
-    python -m ensurepip
+    choco install miniconda3 --params="'/AddToPath:1'"
+    export PATH="/c/tools/miniconda3/scripts:/c/tools/miniconda3/:$PATH"
+
+    conda env create -n pysndfx python=3.6
+    source activate pysndfx
+
+    conda install -yc conda-forge ffmpeg sox
   fi
 
 install:
