@@ -52,6 +52,8 @@ deploy:
   provider: pypi
   user: carlthome
   skip_cleanup: true
+  distributions: 'sdist bdist_wheel'
+  skip_existing: true
   on:
     tags: true
     branch: master
