@@ -30,12 +30,12 @@ addons:
 before_install: |
   if [ $TRAVIS_OS_NAME == 'windows' ]
   then
-    wget https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2-win32.exe
-    mv sox-14.4.2-win32.exe bin
-    bin/sox.exe --version
-
     choco install miniconda3 --params="'/AddToPath:1'"
     export PATH="/c/tools/miniconda3/scripts:/c/tools/miniconda3/:$PATH"
+  
+    wget https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2-win32.exe
+    mv sox-14.4.2-win32.exe bin/sox.exe
+    bin/sox.exe --version
 
     conda install --yes --no-update-dependencies --channel conda-forge ffmpeg
   fi
