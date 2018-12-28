@@ -27,7 +27,7 @@ addons:
     - ffmpeg
     - sox
 
-before_install: |
+install: |
   if [ $TRAVIS_OS_NAME == 'windows' ]
   then
     choco install miniconda3 --params="'/AddToPath:1'"
@@ -39,12 +39,11 @@ before_install: |
     conda install -yc conda-forge ffmpeg sox
   fi
 
-install:
-- pip install .[test]
+  pip install .[test]
 
-before_script:
-- pip install pytest coverage flake8 flake8-isort
-- pip install flake8-bugbear || true
+before_script: |
+  pip install pytest coverage flake8 flake8-isort
+  pip install flake8-bugbear || true
 
 script:
 # TODO - flake8 --disable-noqa
