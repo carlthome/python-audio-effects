@@ -3,20 +3,19 @@ matrix:
     - os: linux
       dist: xenial
       language: python
+      python: '2.7'
+
+    - os: linux
+      dist: xenial
+      language: python
+      python: '3.6'
 
     - os: windows
       language: minimal # TODO Windows builds don't support python yet.
 
     - os: osx
       language: python
-
-  exclude:
-    - os: osx
-    - python: '2.7' # TODO Doesn't work for some reason?
-
-python:
-- '3.6'
-- '2.7'
+      python: '3.6'
 
 cache: pip
 
