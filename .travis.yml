@@ -1,4 +1,4 @@
-AVICAP32.dllmatrix:
+ffmpegmatrix:
   include:
     - os: linux
       dist: xenial
