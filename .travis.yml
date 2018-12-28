@@ -35,6 +35,7 @@ before_install: |
   then
     choco install python
     python -m ensurepip
+    refreshenv
   elif [ $TRAVIS_OS_NAME == 'osx' ]
   then
     brew install python
