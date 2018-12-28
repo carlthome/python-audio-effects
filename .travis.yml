@@ -12,6 +12,8 @@ python:
 - '3.6'
 - '2.7'
 
+cache: pip
+
 addons:
   apt:
     packages:
