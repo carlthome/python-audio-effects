@@ -3,15 +3,14 @@ matrix:
     - os: linux
       dist: xenial
       language: python
+      python:
+      - 3.6
+      - 2.7
     - os: windows
       language: minimal # TODO Windows builds don't support python yet.
     - os: osx
       language: python
-
-python:
-- '3.7'
-- '3.6'
-- '2.7'
+      python: '3.6'
 
 cache: pip
 
