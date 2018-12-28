@@ -34,13 +34,15 @@ before_install: |
 
     # Download and install sox.
     wget https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2-win32.exe
-    export PATH="`pwd`":$PATH
+    export PATH=$PATH:";$TRAVIS_BUILD_DIR"
+    echo $PATH
     sox --version
 
     # Also install ffmpeg (it's needed by the unit tests for decoding Ogg files).
     wget https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1-win64-static.zip
     unzip ffmpeg-4.1-win64-static.zip
-    export PATH="`pwd`/ffmpeg-4.1-win64-static/bin":$PATH
+    export PATH=$PATH:";$TRAVIS_BUILD_DIR/ffmpeg-4.1-win64-static/bin"
+    echo $PATH
     ffmpeg -version
 
     # Finally, install Python via conda. When Travis CI supports Python for Windows builds we can remove this.
