@@ -23,10 +23,12 @@ addons:
     - sox
   homebrew:
     packages:
+    - python
     - ffmpeg
     - sox
-  choco:
+  chocolatey:
     packages:
+    - python
     - ffmpeg
     - sox.portable
 
@@ -34,12 +36,9 @@ before_install: |
   if [ $TRAVIS_OS_NAME == 'windows' ]
   then
     choco install python
+    alias python=C:\Python37\python.exe
     python -m ensurepip
-    refreshenv
-  elif [ $TRAVIS_OS_NAME == 'osx' ]
-  then
-    brew install python
-    python -m ensurepip
+    alias pip=C:\Python37\pip.exe
   fi
 
 install:
