@@ -1,4 +1,4 @@
-matrix:
+AVICAP32.dllmatrix:
   include:
     - os: linux
       dist: xenial
@@ -32,9 +32,9 @@ before_install: |
   then
     set -e
 
-    wget https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1-win64-static.zip
-    unzip -jd bin ffmpeg-4.1-win64-static.zip
-    bin/ffmpeg.exe -version
+    #wget https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1-win64-static.zip
+    #unzip -jd bin ffmpeg-4.1-win64-static.zip
+    #bin/ffmpeg.exe -version
 
     wget https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2-win32.exe
     mv sox-14.4.2-win32.exe bin
