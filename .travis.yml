@@ -27,19 +27,23 @@ addons:
     - ffmpeg
     - sox
 
-install: |
+before_install: |
   if [ $TRAVIS_OS_NAME == 'windows' ]
   then
+    wget https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1-win64-static.zip
+    unzip ffmpeg-4.1-win64-static.zip
+
+    wget https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2-win32.exe
+    mv sox-14.4.2-win32.exe ffmpeg-4.1-win64-static/bin
+
+    export PATH="`pwd`/ffmpeg-4.1-win64-static/bin":$PATH
+
     choco install miniconda3 --params="'/AddToPath:1'"
     export PATH="/c/tools/miniconda3/scripts:/c/tools/miniconda3/:$PATH"
-
-    conda env create -n pysndfx python=3.6
-    source activate pysndfx
-
-    conda install -yc conda-forge ffmpeg sox
   fi
 
-  pip install .[test]
+install:
+- pip install .[test]
 
 before_script: |
   pip install pytest coverage flake8 flake8-isort
