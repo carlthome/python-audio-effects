@@ -34,8 +34,8 @@ before_install: |
     export PATH="/c/tools/miniconda3/scripts:/c/tools/miniconda3/:$PATH"
   
     wget https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2-win32.exe
-    mv sox-14.4.2-win32.exe bin/sox.exe
-    bin/sox.exe --version
+    mv sox-14.4.2-win32.exe /c/tools/miniconda3/sox.exe
+    sox --version
 
     conda install --yes --no-update-dependencies --channel conda-forge ffmpeg
   fi
