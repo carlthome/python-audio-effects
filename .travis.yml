@@ -11,7 +11,7 @@ matrix:
       python: '3.6'
 
     - os: windows
-      language: minimal # TODO Windows builds don't support python yet.
+      language: shell # TODO Windows builds don't support python yet.
 
     - os: osx
       language: python
