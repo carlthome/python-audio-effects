@@ -37,7 +37,7 @@ before_install: |
     choco install miniconda3 --params="'/AddToPath:1'"
     export PATH="/c/tools/miniconda3/scripts:/c/tools/miniconda3/:$PATH"
 
-    conda install -yc conda-forge ffmpeg
+    conda install --yes --no-update-dependencies --channel conda-forge ffmpeg
   fi
 
 install:
