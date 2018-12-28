@@ -1,27 +1,33 @@
-language: minimal
+language: python
 os:
 - linux
 - windows
 - osx
-sudo: true
-dist: xenial
-before_install: |
-  if [[ $TRAVIS_OS_NAME == 'windows' ]]
-  then
-    export PATH=$PATH:C:\Python37\Scripts
-    python -m ensurepip
-    choco install ffmpeg sox.portable
-  elif [[ $TRAVIS_OS_NAME == 'linux' ]]
-  then
-    sudo apt-get install -y ffmpeg sox
-  elif [[ $TRAVIS_OS_NAME == 'osx' ]]
-  then
-    brew install ffmpeg sox
-    export PATH=$PATH:/Users/travis/Library/Python/2.7/bin
-  fi
-install: pip install --user -e .[test]
-before_script: pip install --user pytest pytest-cov pytest-flake8
-script: pytest --flake8 --cov=pysndfx tests/
+python:
+- 3.6
+- 2.7
+cache: pip
+addons:
+  apt:
+    packages:
+    - ffmpeg
+    - sox
+  homebrew:
+    packages:
+    - ffmpeg
+    - sox
+  choco:
+    packages:
+    - ffmpeg
+    - sox.portable
+install: pip install .[test]
+before_script:
+- pip install pytest coverage flake8 flake8-isort
+- pip install flake8-bugbear || true
+script:
+- flake8 --disable-noqa
+- coverage run -m pytest
+- coverage report
 deploy:
   provider: pypi
   user: carlthome

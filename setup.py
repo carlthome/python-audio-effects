@@ -1,5 +1,4 @@
 # coding=utf-8
-"""Install config."""
 from setuptools import setup
 
 with open('README.md') as f:
