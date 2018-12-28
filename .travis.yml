@@ -1,12 +1,17 @@
-language: python
-os:
-- linux
-- windows
-- osx
+matrix:
+  include:
+    - os: linux
+      dist: xenial
+      language: python
+    - os: windows
+      language: minimal # TODO Windows builds don't support python yet.
+    - os: osx
+      language: python
+
 python:
-- 3.6
-- 2.7
-cache: pip
+- '3.6'
+- '2.7'
+
 addons:
   apt:
     packages:
@@ -20,14 +25,26 @@ addons:
     packages:
     - ffmpeg
     - sox.portable
-install: pip install .[test]
+
+before_install: |
+  if [[ $TRAVIS_OS_NAME == 'windows' ]]
+  then
+    choco install python
+    python -m ensurepip
+  fi
+
+install:
+- pip install .[test]
+
 before_script:
 - pip install pytest coverage flake8 flake8-isort
 - pip install flake8-bugbear || true
+
 script:
 - flake8 --disable-noqa
 - coverage run -m pytest
 - coverage report
+
 deploy:
   provider: pypi
   user: carlthome
