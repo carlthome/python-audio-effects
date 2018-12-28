@@ -30,6 +30,7 @@ addons:
 before_install: |
   if [ $TRAVIS_OS_NAME == 'windows' ]
   then
+    set -e
 
     # Download and install sox.
     wget https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2-win32.exe
