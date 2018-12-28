@@ -33,6 +33,7 @@ before_install: |
     set -e
 
     # Download sox.
+    mkdir bin
     wget -q https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2-win32.exe -o bin/sox.exe
     sox --version
 
