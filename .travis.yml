@@ -1,4 +1,4 @@
-ffmpegmatrix:
+matrix:
   include:
     - os: linux
       dist: xenial
