@@ -31,7 +31,8 @@ before_install: |
   if [ $TRAVIS_OS_NAME == 'windows' ]
   then
     set -e
-    export PATH=$PATH:$TRAVIS_BUILD_DIR
+
+    export PATH=$PATH:$TRAVIS_BUILD_DIR/bin
     echo $PATH
 
     # Download sox.
