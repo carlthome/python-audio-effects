@@ -358,7 +358,7 @@ class AudioEffectsChain:
                wet_gain=0,
                wet_only=False):
         """reverb takes 7 parameters: reverberance, high-freqnency damping,
-        room scale, stereo depth, pre-delay, wet gain and wet only (Truce or
+        room scale, stereo depth, pre-delay, wet gain and wet only (True or
         False)"""
         self.command.append('reverb')
         if wet_only:
