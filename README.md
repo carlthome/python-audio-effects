@@ -44,7 +44,6 @@ from librosa import load
 y, sr = load(infile, sr=None)
 y = fx(y)
 
-
 # Apply the effects and return the results as a ndarray.
 y = fx(infile)
 
