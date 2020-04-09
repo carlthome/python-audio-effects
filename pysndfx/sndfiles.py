@@ -2,7 +2,7 @@ import logging
 import shlex
 import wave
 from subprocess import PIPE, Popen
-
+import platform
 import numpy as np
 
 ENCODINGS_MAPPING = {
@@ -28,7 +28,7 @@ class FilePathInput(SoxInput):
         super(FilePathInput, self).__init__()
         info_cmd = 'sox --i -c ' + filepath
         logger.debug("Running info command : %s" % info_cmd)
-        stdout, stderr = Popen(shlex.split(info_cmd, posix=False), stdout=PIPE, stderr=PIPE).communicate()
+        stdout, stderr = Popen(shlex.split(info_cmd, posix=(True if (platform.system() == 'Windows') else False)), stdout=PIPE, stderr=PIPE).communicate()
         self.channels = int(stdout)
         self.cmd_prefix = filepath
 
