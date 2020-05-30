@@ -504,7 +504,10 @@ class AudioEffectsChain:
                 encoding_out = np.float32
         # finding out which channel count to use (defaults to the input file's channel count)
         if channels_out is None:
-            channels_out = infile.channels
+            if infile is None:
+                channels_out = 1
+            else:
+                channels_out = infile.channels
         if sample_out is None:  # if the output samplerate isn't specified, default to input's
             sample_out = sample_in
 
