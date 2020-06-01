@@ -94,3 +94,7 @@ ENV/
 
 # local test file
 testing.py
+
+# test wav and ogg files
+*.wav
+*.ogg

@@ -128,9 +128,9 @@ class AudioEffectsChain:
         return self
 
     def compand(self, attack=0.2, decay=1, soft_knee=2.0, threshold=-20, db_from=-20.0, db_to=-20.0):
-        """compand takes 6 parameters: 
-        
-        attack (seconds), decay (seconds), soft_knee (ex. 6 results 
+        """compand takes 6 parameters:
+
+        attack (seconds), decay (seconds), soft_knee (ex. 6 results
         in 6:1 compression ratio), threshold (a negative value
         in dB), the level below which the signal will NOT be companded
         (a negative value in dB), the level above which the signal will
@@ -168,8 +168,8 @@ class AudioEffectsChain:
         phase,
         M,
         I,
-        L 
-        
+        L
+
         This effect creates a steep bandpass or
         bandreject filter. You may specify as few as the first two
         parameters. Setting the high-pass parameter to a lower value
@@ -248,15 +248,19 @@ class AudioEffectsChain:
     def delay(self,
               gain_in=0.8,
               gain_out=0.5,
-              delays=list((1000, 1800)),
-              decays=list((0.3, 0.25)),
+              delays=None,
+              decays=None,
               parallel=False):
-        """delay takes 4 parameters: input gain (max 1), output gain 
+        """delay takes 4 parameters: input gain (max 1), output gain
         and then two lists, delays and decays.
 
         Each list is a pair of comma seperated values within
         parenthesis.
         """
+        if delays is None:
+            delays = list((1000, 1800))
+        if decays is None:
+            decays = list((0.3, 0.25))
         self.command.append('echo' + ('s' if parallel else ''))
         self.command.append(gain_in)
         self.command.append(gain_out)
@@ -423,7 +427,6 @@ class AudioEffectsChain:
         self.command.append(depth)
         return self
 
-
     def trim(self, positions):
         """TODO Add docstring."""
         self.command.append("trim")
@@ -501,7 +504,10 @@ class AudioEffectsChain:
                 encoding_out = np.float32
         # finding out which channel count to use (defaults to the input file's channel count)
         if channels_out is None:
-            channels_out = infile.channels
+            if infile is None:
+                channels_out = 1
+            else:
+                channels_out = infile.channels
         if sample_out is None:  # if the output samplerate isn't specified, default to input's
             sample_out = sample_in
 
@@ -535,7 +541,7 @@ class AudioEffectsChain:
         if stderr:
             raise RuntimeError(stderr.decode())
         elif stdout:
-            outsound = np.fromstring(stdout, dtype=encoding_out)
+            outsound = np.frombuffer(stdout, dtype=encoding_out)
             if channels_out > 1:
                 outsound = outsound.reshape((channels_out, int(len(outsound) / channels_out)), order='F')
             if isinstance(outfile, FileBufferOutput):
