@@ -1,8 +1,8 @@
-# coding=utf-8
 """Testing module for the DSP package, preferably run with py.test."""
 import logging
 
 import librosa as lr
+import soundfile as sf
 
 from pysndfx.dsp import AudioEffectsChain
 
@@ -26,33 +26,33 @@ outfile = 'test_output.ogg'
 def test_file_to_file():
     apply_audio_effects(infile, outfile)
     y = lr.load(outfile, sr=None, mono=False)[0]
-    lr.output.write_wav('test_file_to_file.wav', y, sr)
+    sf.write('test_file_to_file.wav', y.T, sr)
     assert lr.util.valid_audio(y, mono=False)
 
 
 def test_ndarray_to_ndarray():
     y = apply_audio_effects(mono)
-    lr.output.write_wav('test_ndarray_to_ndarray_mono.wav', y, sr)
+    sf.write('test_ndarray_to_ndarray_mono.wav', y, sr)
     assert lr.util.valid_audio(y)
 
     y = apply_audio_effects(stereo)
-    lr.output.write_wav('test_ndarray_to_ndarray_stereo.wav', y, sr)
+    sf.write('test_ndarray_to_ndarray_stereo.wav', y.T, sr)
     assert lr.util.valid_audio(y, mono=False)
 
 
 def test_ndarray_to_file():
     apply_audio_effects(mono, outfile)
     y = lr.load(outfile, sr=None)[0]
-    lr.output.write_wav('test_ndarray_to_file_mono.wav', y, sr)
+    sf.write('test_ndarray_to_file_mono.wav', y, sr)
     assert lr.util.valid_audio(y)
 
     apply_audio_effects(stereo, outfile)
     y = lr.load(outfile, sr=None, mono=False)[0]
-    lr.output.write_wav('test_ndarray_to_file_stereo.wav', y, sr)
+    sf.write('test_ndarray_to_file_stereo.wav', y.T, sr)
     assert lr.util.valid_audio(y, mono=False)
 
 
 def test_file_to_ndarray():
     y = apply_audio_effects(infile)
-    lr.output.write_wav('test_file_to_ndarray.wav', y, sr)
+    sf.write('test_file_to_ndarray.wav', y.T, sr)
     assert lr.util.valid_audio(y, mono=False)

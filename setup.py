@@ -1,4 +1,3 @@
-# coding=utf-8
 from setuptools import setup
 
 with open('README.md') as f:
@@ -6,7 +5,7 @@ with open('README.md') as f:
 
 setup(
     name='pysndfx',
-    version='0.3.6',
+    version='0.3.7',
     description='Apply audio effects such as reverb and EQ directly to audio files or NumPy ndarrays.',
     url='https://github.com/carlthome/python-audio-effects',
     author='Carl Thomé',
@@ -27,5 +26,5 @@ setup(
     keywords='audio music sound',
     packages=['pysndfx'],
     install_requires=['numpy'],
-    extras_require={'test': ['librosa']},
+    extras_require={'test': ['pytest', 'flake8', 'flake8-isort', 'flake8-bugbear', 'librosa', 'soundfile']},
 )

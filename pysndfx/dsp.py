@@ -1,4 +1,3 @@
-# coding=utf-8
 """A lightweight Python wrapper of SoX's effects."""
 import shlex
 from io import BufferedReader, BufferedWriter
