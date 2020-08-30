@@ -269,7 +269,7 @@ class AudioEffectsChain:
 
     def echo(self, **kwargs):
         """TODO Add docstring."""
-        self.delay(**kwargs)
+        return self.delay(**kwargs)
 
     def fade(self):
         """TODO Add docstring."""
