@@ -2,7 +2,7 @@
 import shlex
 from io import BufferedReader, BufferedWriter
 from subprocess import PIPE, Popen
-
+import platform
 import numpy as np
 
 from .sndfiles import (
@@ -528,7 +528,7 @@ class AudioEffectsChain:
                 infile.cmd_prefix if infile is not None else '-d',
                 outfile.cmd_suffix if outfile is not None else '-d',
             ] + list(map(str, self.command))),
-            posix=False,
+            posix=(True if (platform.system() == 'Windows') else False),
         )
 
         logger.debug("Running command : %s" % cmd)
