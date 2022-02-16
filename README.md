@@ -1,3 +1,6 @@
+# Deprecated: I strongly recommend checking out github.com/spotify/pedalboard instead!
+Contact me if you'd like this package to persist, and/or if you'd like to take over ownership of this repo.
+
 # pysndfx
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/carlthome/python-audio-effects/Test%20Python%20Package)](https://github.com/carlthome/python-audio-effects/actions?query=workflow%3A%22Test+Python+Package%22) [![PyPI](https://img.shields.io/pypi/v/pysndfx.svg)](https://pypi.python.org/pypi/pysndfx) [![PyPI](https://img.shields.io/pypi/pyversions/pysndfx.svg)](http://py3readiness.org/) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 
