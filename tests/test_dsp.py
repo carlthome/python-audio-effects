@@ -17,7 +17,7 @@ apply_audio_effects = \
      .delay()
      .lowshelf())
 
-infile = lr.util.example_audio_file()
+infile = lr.util.example("brahms")
 mono, sr = lr.load(infile, sr=None)
 stereo, _ = lr.load(infile, sr=None, mono=False)
 outfile = 'test_output.ogg'
